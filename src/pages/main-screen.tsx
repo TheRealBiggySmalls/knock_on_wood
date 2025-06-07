@@ -1,12 +1,18 @@
-
 import { Link } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import MusicPlayer from "@/components/music-player";
 
 const MainScreen = () => {
   //OR FOR VIDEO just have a simple context to togglePausePlay and run it when button is pressed and when exit button is pressed
   //TODO: retain state of play between screens
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [showEntry, setShowEntry] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  const handleEntryClick = () => {
+    setFadeOut(true);
+    setTimeout(() => setShowEntry(false), 600); // match fade duration
+  };
 
   const buttons = [
     { id: 1, name: "Barbossas Peg Leg", image: "/pegleg.png" },
@@ -15,8 +21,31 @@ const MainScreen = () => {
     { id: 4, name: "Bob Dylan's Guitar", image: "/bobdylan.png" }
   ];
 
+  const entryPageItems = [
+    { name: "entry1", image: "/image.png" },
+    { name: "entry2", image: "/image.png" },
+    { name: "entry3", image: "/image.png" },
+    { name: "entry4", image: "/image.png" },
+  ];
+  const [entryIndex] = useState(() => Math.floor(Math.random() * entryPageItems.length));
+
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* Entry Screen Overlay */}
+      {showEntry && (
+        <div
+          className={`fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-700 ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          onClick={handleEntryClick}
+        >
+          <img
+            src={entryPageItems[entryIndex].image}
+            alt={entryPageItems[entryIndex].name}
+            className="w-full h-full object-cover"
+            style={{ maxWidth: '100vw', maxHeight: '100vh' }}
+          />
+        </div>
+      )}
+
       {/* video bground */}
       <video
         ref={videoRef}

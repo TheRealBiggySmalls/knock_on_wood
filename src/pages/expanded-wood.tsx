@@ -3,10 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
-const ItemDetail = () => {
+const ExpandedWood = () => {
   const { id } = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
 
+  //TODO: centralise these consts
   const items = {
     "1": { 
       name: "Barbossas Peg Leg", 
@@ -89,7 +90,7 @@ const ItemDetail = () => {
   );
 };
 
-export default ItemDetail;
+export default ExpandedWood;
 
 
 
