@@ -1,17 +1,22 @@
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
 import MusicPlayer from "@/components/music-player";
+import { useOmniContext } from "@/context/omni-context";
 
 const MainScreen = () => {
-  //OR FOR VIDEO just have a simple context to togglePausePlay and run it when button is pressed and when exit button is pressed
-  //TODO: retain state of play between screens
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [showEntry, setShowEntry] = useState(true);
+  const { hasSeenEntry, setHasSeenEntry } = useOmniContext();
   const [fadeOut, setFadeOut] = useState(false);
 
+  // Use onTransitionEnd to remove overlay after fade
   const handleEntryClick = () => {
     setFadeOut(true);
-    setTimeout(() => setShowEntry(false), 600); // match fade duration
+  };
+
+  const handleTransitionEnd = () => {
+    if (fadeOut) {
+      setHasSeenEntry(true);
+    }
   };
 
   const buttons = [
@@ -32,16 +37,17 @@ const MainScreen = () => {
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Entry Screen Overlay */}
-      {showEntry && (
+      {!hasSeenEntry && (
         <div
-          className={`fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-700 ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          className={`fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-[2500ms] ease-linear ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
           onClick={handleEntryClick}
+          onTransitionEnd={handleTransitionEnd}
         >
           <img
             src={entryPageItems[entryIndex].image}
             alt={entryPageItems[entryIndex].name}
             className="w-full h-full object-cover"
-            style={{ maxWidth: '100vw', maxHeight: '100vh' }}
+            style={{ maxWidth: '100vw', maxHeight: '100vh', transition: 'opacity 2.5s linear' }}
           />
         </div>
       )}
