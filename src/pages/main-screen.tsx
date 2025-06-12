@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import MusicPlayer from "@/components/music-player";
 import { useOmniContext } from "@/context/omni-context";
 
@@ -7,6 +7,17 @@ const MainScreen = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { hasSeenEntry, setHasSeenEntry } = useOmniContext();
   const [fadeOut, setFadeOut] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileName, setProfileName] = useState("");
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+
+  // Load profile from localStorage on mount
+  useEffect(() => {
+    const name = localStorage.getItem("profileName");
+    const pic = localStorage.getItem("profilePic");
+    if (name) setProfileName(name);
+    if (pic) setProfilePic(pic);
+  }, []);
 
   // Use onTransitionEnd to remove overlay after fade
   const handleEntryClick = () => {
@@ -19,18 +30,33 @@ const MainScreen = () => {
     }
   };
 
+  const handleProfileSave = () => {
+    localStorage.setItem("profileName", profileName);
+    if (profilePic) localStorage.setItem("profilePic", profilePic);
+    setShowProfileModal(false);
+  };
+
+  const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setProfilePic(ev.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const buttons = [
-    { id: 1, name: "Barbossas Peg Leg", image: "/pegleg.png" },
-    { id: 2, name: "Hobbit Front Door", image: "/hobbit.png" },
-    { id: 3, name: "Gretzky's Twig", image: "/gretsky.png" },
-    { id: 4, name: "Bob Dylan's Guitar", image: "/bobdylan.png" }
+    { id: 1, name: "Barbossas Peg Leg", image: "/buttons/ogWood.png" },
+    { id: 2, name: "Hobbit Front Door", image: "/buttons/frodoDoor.png" },
+    { id: 3, name: "Gretzky's Twig", image: "/buttons/ryanDunn.png" },
+    { id: 4, name: "Bob Dylan's Guitar", image: "/buttons/charlieTree.png" }
   ];
 
   const entryPageItems = [
-    { name: "entry1", image: "/image.png" },
-    { name: "entry2", image: "/image.png" },
-    { name: "entry3", image: "/image.png" },
-    { name: "entry4", image: "/image.png" },
+    { name: "intro2", image: "/intros/intro1.png" },
+    { name: "intro2", image: "/intros/intro2.png" },
+    { name: "intro3", image: "/intros/intro3.png" },
   ];
   const [entryIndex] = useState(() => Math.floor(Math.random() * entryPageItems.length));
 
@@ -46,8 +72,8 @@ const MainScreen = () => {
           <img
             src={entryPageItems[entryIndex].image}
             alt={entryPageItems[entryIndex].name}
-            className="w-full h-full object-cover"
-            style={{ maxWidth: '100vw', maxHeight: '100vh', transition: 'opacity 2.5s linear' }}
+            className="absolute inset-0 w-full h-full object-contain bg-black"
+            style={{ maxWidth: '100vw', maxHeight: '100vh', minWidth: '100vw', minHeight: '100vh', transition: 'opacity 2.5s linear' }}
           />
         </div>
       )}
@@ -84,27 +110,81 @@ const MainScreen = () => {
             <div className="w-5 h-2 bg-white rounded-sm m-0.5"></div>
           </div>
         </div>
+        {/* User Icon */}
+        <button
+          className="ml-4 flex items-center justify-center w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 transition-colors border border-white/40 overflow-hidden"
+          onClick={() => setShowProfileModal(true)}
+        >
+          {profilePic ? (
+            <img
+              src={profilePic}
+              alt="Profile"
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.75z" />
+            </svg>
+          )}
+        </button>
       </div>
+
+      {/* Profile Modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-white rounded-xl p-6 w-80 flex flex-col gap-4 relative">
+            <button className="absolute top-2 right-2 text-gray-500 hover:text-black" onClick={() => setShowProfileModal(false)}>&times;</button>
+            <div className="flex flex-col items-center gap-2">
+              <label htmlFor="profile-pic" className="cursor-pointer">
+                <img
+                  src={profilePic || "/placeholder.svg"}
+                  alt="Profile"
+                  className="w-20 h-20 rounded-full object-cover border border-gray-300"
+                />
+                <input
+                  id="profile-pic"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleProfilePicChange}
+                />
+              </label>
+              <input
+                type="text"
+                className="border rounded px-2 py-1 w-full text-center"
+                placeholder="Enter your name"
+                value={profileName}
+                onChange={e => setProfileName(e.target.value)}
+              />
+              <button
+                className="mt-2 bg-black text-white rounded px-4 py-2 hover:bg-gray-800"
+                onClick={handleProfileSave}
+              >Save</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     {/* main stuff */}
       <div className="relative z-10 flex-1 flex items-center justify-center p-8">
         <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
           {buttons.map((button) => (
             <Link key={button.id} to={`/item/${button.id}`}>
-              <div className="hover:scale-105 transition-transform duration-200">
+              <div className="hover:scale-105 active:scale-95 transition-transform duration-200">
                 <img
                   src={button.image}
                   alt={button.name}
-                  className="w-full h-auto object-contain rounded-lg"
+                  className="w-full h-auto object-contain rounded-lg select-none"
+                  draggable={false}
                 />
               </div>
             </Link>
           ))}
         </div>
-      </div>
 
-      {/*Music Player*/}
-      <MusicPlayer/>
+        {/*music player code can be found in components/music-player*/}
+        <MusicPlayer/>
+      </div>
 
       <style>
         {`

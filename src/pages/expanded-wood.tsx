@@ -1,8 +1,10 @@
-
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
+//AIDAN: this page is what pops up when you click on an item in the main screen.
+// It shows a full screen image of the item and plays a sound when you tap it.
+// It also has a back button to return to the main screen.
 const ExpandedWood = () => {
   const { id } = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -10,24 +12,24 @@ const ExpandedWood = () => {
   //TODO: centralise these consts
   const items = {
     "1": { 
-      name: "Barbossas Peg Leg", 
-      image: "/pegleg.png",
-      sound: "wood-tap-1"
+      name: "ogWood", 
+      image: "/expanded/screen1.png",
+      sound: "/sounds/Wood_dig1.ogg"
     },
     "2": { 
-      name: "Hobbit Front Door", 
-      image: "/hobbit.png",
-      sound: "wood-tap-2"
+      name: "frodoDoor", 
+      image: "/expanded/screen2.png",
+      sound: "/sounds/wood-tap-1.wav"
     },
     "3": { 
-      name: "Gretzky's Twig", 
-      image: "/gretsky.png",
-      sound: "wood-tap-3"
+      name: "ryanDunn", 
+      image: "/expanded/screen3.png",
+      sound: "/sounds/ryanDunn.mp3"
     },
     "4": { 
-      name: "Bob Dylan's Guitar", 
-      image: "/bobdylan.png",
-      sound: "wood-tap-4"
+      name: "charlieTree", 
+      image: "/expanded/screen4.png",
+      sound: "/sounds/wood-tap-1.wav"
     }
   };
 
@@ -35,15 +37,9 @@ const ExpandedWood = () => {
 
   const playWoodSound = () => {
     setIsPlaying(true);
-    
     // create and play audio
-    const audio = new Audio();
-    
-    //TODO
-    audio.src = "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvGUgBCWB0fPRgS0FNnzE8+OFQQAO";
-    
+    const audio = new Audio(item.sound);
     audio.play().catch(console.error);
-    
     // reset playing state after a short time
     setTimeout(() => setIsPlaying(false), 300);
   };
@@ -73,7 +69,8 @@ const ExpandedWood = () => {
         <img
           src={item.image}
           alt={item.name}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-contain bg-black"
+          style={{ maxWidth: '100vw', maxHeight: '100vh', minWidth: '100vw', minHeight: '100vh' }}
         />
       </div>
 
