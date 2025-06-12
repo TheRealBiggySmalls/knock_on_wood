@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const music = [
 	{
@@ -24,38 +24,65 @@ const music = [
 	},
 ];
 
+let globalAudio: HTMLAudioElement | null = null;
+let globalTrackIndex: number | null = null;
+let globalSetters: Array<(idx: number) => void> = [];
+
 const MusicPlayer = () => {
-	const audioRef = useRef<HTMLAudioElement>(null);
-	const [currentTrackIndex, setCurrentTrackIndex] = useState(() => Math.floor(Math.random() * music.length));
+	const [, forceRerender] = useState(0); // for UI update
+	const [currentTrackIndex, setCurrentTrackIndex] = useState(() => {
+		if (globalTrackIndex !== null) return globalTrackIndex;
+		const idx = Math.floor(Math.random() * music.length);
+		globalTrackIndex = idx;
+		return idx;
+	});
+
+	// Register setter for sync across mounts
+	useEffect(() => {
+		globalSetters.push(setCurrentTrackIndex);
+		return () => {
+			globalSetters = globalSetters.filter((fn) => fn !== setCurrentTrackIndex);
+		};
+	}, []);
 
 	useEffect(() => {
-		if (audioRef.current) {
-			audioRef.current.src = music[currentTrackIndex].song;
-			audioRef.current.play();
+		// Only create audio if not already created
+		if (!globalAudio) {
+			globalAudio = new Audio(music[currentTrackIndex].song);
+			globalAudio.loop = false;
+			globalAudio.onended = () => {
+				const nextIndex = (globalTrackIndex! + 1) % music.length;
+				globalTrackIndex = nextIndex;
+				globalAudio!.src = music[nextIndex].song;
+				globalAudio!.play();
+				globalSetters.forEach((fn) => fn(nextIndex));
+			};
+			globalAudio.play();
+		} else {
+			// If audio exists but track index changed (e.g. on reload), sync UI
+			if (globalTrackIndex !== currentTrackIndex) {
+				setCurrentTrackIndex(globalTrackIndex!);
+			}
+		}
+		// eslint-disable-next-line
+	}, []);
+
+	// Keep UI in sync with globalTrackIndex
+	useEffect(() => {
+		if (currentTrackIndex !== globalTrackIndex) {
+			setCurrentTrackIndex(globalTrackIndex!);
 		}
 	}, [currentTrackIndex]);
 
-	// When the current track ends, go to the next (loop forever)
-	const handleEnded = () => {
-		setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % music.length);
-	};
-
 	return (
-		<>
-			<audio
-				ref={audioRef}
-				className="hidden"
-				onEnded={handleEnded}
+		<div className="fixed bottom-0 left-0 w-full z-50 flex items-center justify-center pointer-events-none" style={{ background: "none" }}>
+			<img
+				src={music[currentTrackIndex].image}
+				alt={music[currentTrackIndex].name}
+				className="h-32 md:h-48 w-auto object-contain pointer-events-auto"
+				style={{ maxWidth: '90vw' }}
 			/>
-			<div className="fixed bottom-0 left-0 w-full z-50 flex items-center justify-center pointer-events-none" style={{ background: "none" }}>
-				<img
-					src={music[currentTrackIndex].image}
-					alt={music[currentTrackIndex].name}
-					className="h-32 md:h-48 w-auto object-contain pointer-events-auto"
-					style={{ maxWidth: '90vw' }}
-				/>
-			</div>
-		</>
+		</div>
 	);
 };
 
