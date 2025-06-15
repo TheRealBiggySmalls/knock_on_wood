@@ -1,13 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainScreen from "./main-screen"; // Ensure this path is correct and the file exports default
+import MainScreen from "./main-screen";
 
 const App = () => (
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<MainScreen />} />
-      {/* other routes can go here */}
     </Routes>
   </BrowserRouter>
 );

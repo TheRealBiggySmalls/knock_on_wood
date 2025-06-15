@@ -11,7 +11,7 @@ const MainScreen = () => {
   const [profileName, setProfileName] = useState("");
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
-  // Load profile from localStorage on mount
+  // load local profile
   useEffect(() => {
     const name = localStorage.getItem("profileName");
     const pic = localStorage.getItem("profilePic");
@@ -19,7 +19,7 @@ const MainScreen = () => {
     if (pic) setProfilePic(pic);
   }, []);
 
-  // Use onTransitionEnd to remove overlay after fade
+  // transition fade out entry page
   const handleEntryClick = () => {
     setFadeOut(true);
   };
@@ -62,7 +62,7 @@ const MainScreen = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Entry Screen Overlay */}
+      {/* entry screen */}
       {!hasSeenEntry && (
         <div
           className={`fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-[2500ms] ease-linear ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
@@ -110,7 +110,7 @@ const MainScreen = () => {
             <div className="w-5 h-2 bg-white rounded-sm m-0.5"></div>
           </div>
         </div>
-        {/* User Icon */}
+        {/* user icon */}
         <button
           className="ml-4 flex items-center justify-center w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 transition-colors border border-white/40 overflow-hidden"
           onClick={() => setShowProfileModal(true)}
@@ -129,7 +129,7 @@ const MainScreen = () => {
         </button>
       </div>
 
-      {/* Profile Modal */}
+      {/* profile modal */}
       {showProfileModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div className="bg-white rounded-xl p-6 w-80 flex flex-col gap-4 relative">
@@ -160,14 +160,25 @@ const MainScreen = () => {
                 className="mt-2 bg-black text-white rounded px-4 py-2 hover:bg-gray-800"
                 onClick={handleProfileSave}
               >Save</button>
+              {/* luck and chat navigation */}
+              <div className="flex w-full gap-4 mt-4">
+                <Link to="/luck-forecast" className="flex-1 flex flex-col items-center justify-center py-2 rounded bg-green-100 hover:bg-green-200 transition-all">
+                  <span className="text-2xl">🍀</span>
+                  <span className="text-xs mt-1 text-green-900 font-medium">Luck Forecast</span>
+                </Link>
+                <Link to="/message-thread" className="flex-1 flex flex-col items-center justify-center py-2 rounded bg-blue-100 hover:bg-blue-200 transition-all">
+                  <span className="text-2xl">🤗</span>
+                  <span className="text-xs mt-1 text-blue-900 font-medium">Message Thread</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       )}
 
     {/* main stuff */}
-      <div className="relative z-10 flex-1 flex items-center justify-center p-8">
-        <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8">
+        <div className="grid grid-cols-2 gap-4 w-full max-w-sm mb-8">
           {buttons.map((button) => (
             <Link key={button.id} to={`/item/${button.id}`}>
               <div className="hover:scale-105 active:scale-95 transition-transform duration-200">
