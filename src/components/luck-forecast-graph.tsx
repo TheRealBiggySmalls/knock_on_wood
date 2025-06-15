@@ -38,13 +38,14 @@ const LuckForecastGraph = ({ today, allTimeHigh }: { today: string; allTimeHigh:
     const fetchWeek = async () => {
       setLoading(true);
       const days = getLast7Days();
-      const promises = days.map(async (date) => {
-        const ref = collection(db, "luck-count");
-        const snap = await getDocs(ref);
-        const docSnap = snap.docs.find(doc => doc.id === date);
+      // Fetch all docs once, then filter for the last 7 days
+      const ref = collection(db, "luck-count");
+      const snap = await getDocs(ref);
+      const docsById = Object.fromEntries(snap.docs.map(doc => [doc.id, doc]));
+      const results = days.map(date => {
+        const docSnap = docsById[date];
         return docSnap ? (docSnap.data().count || 0) : 0;
       });
-      const results = await Promise.all(promises);
       setWeekData(results);
       setLoading(false);
     };
@@ -55,37 +56,41 @@ const LuckForecastGraph = ({ today, allTimeHigh }: { today: string; allTimeHigh:
   const max = Math.max(...weekData, 1);
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="relative w-full max-w-xs h-32 bg-[#eaeaea] rounded-2xl border-4 border-[#bcbcbc] shadow-inner flex items-end justify-between px-4 py-6" style={{boxShadow: '0 4px 16px #8888, 0 1px 0 #fff inset'}}>
-        {weekData.map((val, i) => {
-          // default is to treat as low
-          const color = getForecastColor(val || 0, allTimeHigh);
-          return (
-            <div key={i} className="flex flex-col items-center justify-end h-full" style={{width: '14%'}}>
-              <div
-                className="rounded-full"
-                style={{
-                  width: 18,
-                  height: 18 + (val && allTimeHigh ? Math.round(40 * val / allTimeHigh) : 0),
-                  marginBottom: 4,
-                  transition: 'height 0.3s',
-                  border: '2px solid #333',
-                  boxShadow: '0 2px 6px #0003',
-                  background: color.includes('gradient') ? undefined : color,
-                  backgroundImage: color.includes('gradient') ? color : undefined,
-                }}
-                title={val + ' luck'}
-              />
-              <span className="text-xs text-gray-700 mt-1">
-                {(() => {
-                  const d = new Date();
-                  d.setDate(d.getDate() - (6 - i));
-                  return d.toLocaleDateString(undefined, { weekday: 'short' });
-                })()}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+      {loading ? (
+        <div className="w-full h-32 flex items-center justify-center text-gray-400">Loading...</div>
+      ) : (
+        <div className="relative w-full max-w-xs h-32 bg-[#eaeaea] rounded-2xl border-4 border-[#bcbcbc] shadow-inner flex items-end justify-between px-4 py-6" style={{boxShadow: '0 4px 16px #8888, 0 1px 0 #fff inset'}}>
+          {weekData.map((val, i) => {
+            // default is to treat as low
+            const color = getForecastColor(val || 0, allTimeHigh);
+            return (
+              <div key={i} className="flex flex-col items-center justify-end h-full" style={{width: '14%'}}>
+                <div
+                  className="rounded-full"
+                  style={{
+                    width: 18,
+                    height: 18 + (val && allTimeHigh ? Math.round(40 * val / allTimeHigh) : 0),
+                    marginBottom: 4,
+                    transition: 'height 0.3s',
+                    border: '2px solid #333',
+                    boxShadow: '0 2px 6px #0003',
+                    background: color.includes('gradient') ? undefined : color,
+                    backgroundImage: color.includes('gradient') ? color : undefined,
+                  }}
+                  title={val + ' luck'}
+                />
+                <span className="text-xs text-gray-700 mt-1">
+                  {(() => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - (6 - i));
+                    return d.toLocaleDateString(undefined, { weekday: 'short' });
+                  })()}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
+import { expandedWoods } from "@/constants/assets"; 
 
 //AIDAN: this page is what pops up when you click on an item in the main screen.
 // It shows a full screen image of the item and plays a sound when you tap it.
@@ -9,31 +10,7 @@ const ExpandedWood = () => {
   const { id } = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
 
-  //TODO: centralise these consts
-  const items = {
-    "1": { 
-      name: "ogWood", 
-      image: "/expanded/screen1.png",
-      sound: "/sounds/Wood_dig1.ogg"
-    },
-    "2": { 
-      name: "frodoDoor", 
-      image: "/expanded/screen2.png",
-      sound: "/sounds/wood-tap-1.wav"
-    },
-    "3": { 
-      name: "ryanDunn", 
-      image: "/expanded/screen3.png",
-      sound: "/sounds/ryanDunn.mp3"
-    },
-    "4": { 
-      name: "charlieTree", 
-      image: "/expanded/screen4.png",
-      sound: "/sounds/wood-tap-1.wav"
-    }
-  };
-
-  const item = items[id as keyof typeof items];
+  const item = expandedWoods[id as keyof typeof expandedWoods];
 
   const playWoodSound = () => {
     setIsPlaying(true);

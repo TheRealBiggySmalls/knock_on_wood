@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import MusicPlayer from "@/components/music-player";
 import { useOmniContext } from "@/context/omni-context";
+import { mainScreenButtons, entryPageItems} from "@/constants/assets";
 
 const MainScreen = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -46,18 +47,6 @@ const MainScreen = () => {
     reader.readAsDataURL(file);
   };
 
-  const buttons = [
-    { id: 1, name: "Barbossas Peg Leg", image: "/buttons/ogWood.png" },
-    { id: 2, name: "Hobbit Front Door", image: "/buttons/frodoDoor.png" },
-    { id: 3, name: "Gretzky's Twig", image: "/buttons/ryanDunn.png" },
-    { id: 4, name: "Bob Dylan's Guitar", image: "/buttons/charlieTree.png" }
-  ];
-
-  const entryPageItems = [
-    { name: "intro2", image: "/intros/intro1.png" },
-    { name: "intro2", image: "/intros/intro2.png" },
-    { name: "intro3", image: "/intros/intro3.png" },
-  ];
   const [entryIndex] = useState(() => Math.floor(Math.random() * entryPageItems.length));
 
   return (
@@ -112,14 +101,15 @@ const MainScreen = () => {
         </div>
         {/* user icon */}
         <button
-          className="ml-4 flex items-center justify-center w-8 h-8 rounded-full bg-white/20 hover:bg-white/40 transition-colors border border-white/40 overflow-hidden"
+          className="ml-4 flex items-center justify-center w-8 h-8 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 overflow-hidden p-0 rounded-none"
           onClick={() => setShowProfileModal(true)}
         >
           {profilePic ? (
             <img
               src={profilePic}
               alt="Profile"
-              className="w-8 h-8 rounded-full object-cover"
+              className="w-8 h-8 object-cover p-0 m-0 rounded-none"
+              style={{ aspectRatio: '1 / 1', borderRadius: 0, padding: 0, margin: 0 }}
             />
           ) : (
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white">
@@ -139,7 +129,8 @@ const MainScreen = () => {
                 <img
                   src={profilePic || "/placeholder.svg"}
                   alt="Profile"
-                  className="w-20 h-20 rounded-full object-cover border border-gray-300"
+                  className="w-20 h-20 object-cover border border-gray-300 p-0 m-0 rounded-none"
+                  style={{ aspectRatio: '1 / 1', borderRadius: 0, padding: 0, margin: 0 }}
                 />
                 <input
                   id="profile-pic"
@@ -179,7 +170,7 @@ const MainScreen = () => {
     {/* main stuff */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8">
         <div className="grid grid-cols-2 gap-4 w-full max-w-sm mb-8">
-          {buttons.map((button) => (
+          {mainScreenButtons.map((button) => (
             <Link key={button.id} to={`/item/${button.id}`}>
               <div className="hover:scale-105 active:scale-95 transition-transform duration-200">
                 <img
@@ -193,8 +184,6 @@ const MainScreen = () => {
           ))}
         </div>
 
-        {/*music player code can be found in components/music-player*/}
-        <MusicPlayer/>
       </div>
 
       <style>

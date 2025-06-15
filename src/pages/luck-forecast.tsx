@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { db } from "@/lib/firebase";
-import { doc, updateDoc, setDoc, increment, getDoc, collection, getDocs } from "firebase/firestore";
+import { doc, updateDoc, setDoc, increment, getDoc, collection, getDocs, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 import LuckForecastGraph from "@/components/luck-forecast-graph";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -20,38 +20,66 @@ const LuckForecast = () => {
   const [addingLuck, setAddingLuck] = useState(false);
   const [allTimeHigh, setAllTimeHigh] = useState(1);
   const [today, setToday] = useState(() => new Date().toISOString().slice(0, 10));
+  //these track animations
+  const [clovers, setClovers] = useState<{id:number, left:number}[]>([]);
+  const cloverId = useRef(0);
+
+  // track last known good value to prevent flicker
+  const lastLuckCount = useRef<number>(0);
 
   useEffect(() => {
-    const fetchLuck = async () => {
-      const ref = doc(db, "luck-count", today);
-      const snap = await getDoc(ref);
-      setLuckCount(snap.exists() ? snap.data().count || 0 : 0);
-    };
-    fetchLuck();
+    const ref = doc(db, "luck-count", today);
+    // real time baby
+    const unsub = onSnapshot(ref, (snap) => {
+      let count = snap.exists() ? snap.data().count || 0 : null;
+      // only update to 0 if the document truly doesn't exist (new day)
+      if (count === 0 && lastLuckCount.current > 0 && snap.exists()) {
+        // prevent firestore race condition making ui glitchhy
+        return;
+      }
+      if (typeof count === 'number' && count >= 0) {
+        lastLuckCount.current = count;
+      }
+      setLuckCount(count);
+    });
+    return () => unsub();
   }, [today]);
 
   useEffect(() => {
     const fetchAllTimeHigh = async () => {
       const ref = collection(db, "luck-count");
-      const snap = await getDocs(ref);
+      // get all time high
+      const q = query(ref, orderBy("count", "desc"), limit(1));
+      const snap = await getDocs(q);
       let max = 1;
-      snap.forEach(doc => {
-        const c = doc.data().count || 0;
-        if (c > max) max = c;
-      });
+      if (!snap.empty) {
+        max = snap.docs[0].data().count || 1;
+      }
       setAllTimeHigh(max);
     };
     fetchAllTimeHigh();
   }, [luckCount]);
 
   const handleAddLuck = async () => {
-    setAddingLuck(true);
-    const ref = doc(db, "luck-count", today);
-    await setDoc(ref, { count: 0 }, { merge: true });
-    await updateDoc(ref, { count: increment(1) });
-    const snap = await getDoc(ref);
-    setLuckCount(snap.data().count || 0);
-    setAddingLuck(false);
+    // floating clover animation (always instant)
+    const left = 35 + Math.random() * 30; // randomize horizontal position (vw)
+    const id = cloverId.current++;
+    setClovers((prev) => [...prev, {id, left}]);
+    setTimeout(() => {
+      setClovers((prev) => prev.filter(c => c.id !== id));
+    }, 1400); // match animation duration
+    
+    try {
+      const ref = doc(db, "luck-count", today);
+      await updateDoc(ref, { count: increment(1) });
+    } catch (e: any) {
+      // if doc doesn't exist, creat it
+      if (e.code === 'not-found' || e.message?.includes('No document to update')) {
+        await setDoc(doc(db, "luck-count", today), { count: 1 });
+      } else {
+        // should probably show something useful here LOL
+      }
+    }
   };
 
   // get forecast label and color
@@ -70,7 +98,24 @@ const LuckForecast = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-green-50">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-green-50 overflow-hidden">
+      {/* emoji animations */}
+      <div style={{ pointerEvents: 'none', position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 50 }}>
+        {clovers.map(({id, left}) => (
+          <span
+            key={id}
+            style={{
+              position: 'absolute',
+              left: `${left}vw`,
+              bottom: '100px',
+              fontSize: '2.5rem',
+              pointerEvents: 'none',
+              zIndex: 50,
+              animation: 'clover-float 1.4s cubic-bezier(.4,1.6,.6,1) forwards'
+            }}
+          >🍀</span>
+        ))}
+      </div>
       <div className="absolute top-4 left-4 z-20">
         <button
           onClick={() => navigate("/")}
@@ -99,6 +144,22 @@ const LuckForecast = () => {
         <LuckForecastGraph today={today} allTimeHigh={allTimeHigh} />
       </div>
       <div className="mt-2 text-xs text-gray-400 text-center">Feeling lucky?</div>
+      <style>{`
+        @keyframes clover-float {
+          0% {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotate(-10deg);
+          }
+          60% {
+            opacity: 1;
+            transform: translateY(-120px) scale(1.2) rotate(8deg);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-220px) scale(0.8) rotate(-12deg);
+          }
+        }
+      `}</style>
     </div>
   );
 };

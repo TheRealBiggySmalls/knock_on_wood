@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface OmniContextType {
   hasSeenEntry: boolean;
   setHasSeenEntry: (seen: boolean) => void;
+  hasPostedToday: boolean;
+  setHasPostedToday: (posted: boolean) => void;
 }
 
 //Aidan: this file is kind of tricky, it basically manages states and information across the app
@@ -20,15 +22,43 @@ export const OmniContextProvider = ({
   children
 }: OmniContextProviderProps) => {
   const [hasSeenEntry, setHasSeenEntry] = useState(false);
-  
+  // remember if user has posted today
+  const today = new Date().toISOString().slice(0, 10);
+  const [hasPostedToday, setHasPostedTodayState] = useState(() => {
+    return localStorage.getItem("hasPosted") === today;
+  });
+
+  // keep localStorage in sync when setHasPostedToday is called
+  const setHasPostedToday = (posted: boolean) => {
+    setHasPostedTodayState(posted);
+    if (posted) {
+      localStorage.setItem("hasPosted", today);
+    } else {
+      localStorage.removeItem("hasPosted");
+    }
+  };
+
+  // reset when day changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date().toISOString().slice(0, 10);
+      if (now !== today) {
+        setHasPostedTodayState(false);
+        localStorage.removeItem("hasPosted");
+      }
+    }, 60 * 1000); // check every minute
+    return () => clearInterval(interval);
+  }, [today]);
+
   return (
     <OmniContext.Provider 
       value={{ 
         hasSeenEntry, 
-        setHasSeenEntry 
+        setHasSeenEntry,
+        hasPostedToday,
+        setHasPostedToday
       }}
     >
-      {" "}
       {children}
     </OmniContext.Provider>
   );

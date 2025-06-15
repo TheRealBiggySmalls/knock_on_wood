@@ -1,28 +1,5 @@
 import { useEffect, useState } from "react";
-
-const music = [
-	{
-		id: 1,
-		name: "Rest",
-		artist: "backtothemoney",
-		song: "/music/track1.mp3",
-		image: "/music/b2mtab.png",
-	},
-	{
-		id: 2,
-		name: "Main Theme",
-		artist: "Will Alone",
-		song: "/music/track2.mp3",
-		image: "/music/bywilltab.png",
-	},
-	{
-		id: 3,
-		name: "Like a Motion Picture",
-		artist: "jgack",
-		song: "/music/track3.mp3",
-		image: "/music/jgacktab.png",
-	},
-];
+import { music } from "@/constants/assets"; 
 
 let globalAudio: HTMLAudioElement | null = null;
 let globalTrackIndex: number | null = null;
@@ -37,7 +14,7 @@ const MusicPlayer = () => {
 		return idx;
 	});
 
-	// Register setter for sync across mounts
+
 	useEffect(() => {
 		globalSetters.push(setCurrentTrackIndex);
 		return () => {
@@ -46,10 +23,11 @@ const MusicPlayer = () => {
 	}, []);
 
 	useEffect(() => {
-		// Only create audio if not already created
+		// create audio
 		if (!globalAudio) {
 			globalAudio = new Audio(music[currentTrackIndex].song);
 			globalAudio.loop = false;
+			globalAudio.volume = 0.5; // keep it a bit quieter
 			globalAudio.onended = () => {
 				const nextIndex = (globalTrackIndex! + 1) % music.length;
 				globalTrackIndex = nextIndex;
@@ -59,15 +37,28 @@ const MusicPlayer = () => {
 			};
 			globalAudio.play();
 		} else {
-			// If audio exists but track index changed (e.g. on reload), sync UI
+			// if audio exists but track index changed (e.g. on reload), sync UI
 			if (globalTrackIndex !== currentTrackIndex) {
 				setCurrentTrackIndex(globalTrackIndex!);
 			}
 		}
-		// eslint-disable-next-line
+		// cleanup
+		const cleanup = () => {
+			if (globalAudio) {
+				globalAudio.pause();
+				globalAudio.currentTime = 0;
+				globalAudio = null;
+				globalTrackIndex = null;
+			}
+		};
+		window.addEventListener('beforeunload', cleanup);
+		return () => {
+			cleanup();
+			window.removeEventListener('beforeunload', cleanup);
+		};
 	}, []);
 
-	// Keep UI in sync with globalTrackIndex
+	// keep UI in sync with globalTrackIndex
 	useEffect(() => {
 		if (currentTrackIndex !== globalTrackIndex) {
 			setCurrentTrackIndex(globalTrackIndex!);
