@@ -12,4 +12,4 @@ ios
 .vscode/*
 
 # u know how it is
-package-lock.json
+#package-lock.json
