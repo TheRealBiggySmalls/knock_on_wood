@@ -7,15 +7,6 @@ import { useOmniContext } from "@/context/omni-context";
 
 const today = new Date().toISOString().slice(0, 10);
 
-// Define a type for the message data
-interface Message {
-  id: string; // Document ID
-  username: string; // Username of the sender
-  text: string; // Message text
-  type: string; // Message type (e.g., "text", "image")
-  timestamp: unknown; // Timestamp of the message
-}
-
 const MessageThread = () => {
   const navigate = useNavigate();
   const { hasPostedToday, setHasPostedToday } = useOmniContext();
@@ -39,7 +30,7 @@ const MessageThread = () => {
       setMessages(
         snap.docs.map((doc) => ({
           id: doc.id,
-          username: doc.data().username || "Unknown", // Default value if missing
+          username: doc.data().username || "Unknown", 
           text: doc.data().text || "",
           type: doc.data().type || "text",
           timestamp: doc.data().timestamp || null,
