@@ -23,10 +23,10 @@ export const expandedWoods = {
 };
 
 export const mainScreenButtons = [
-  { id: 1, name: "Barbossas Peg Leg", image: "/buttons/ogWood.png" },
-  { id: 2, name: "Hobbit Front Door", image: "/buttons/frodoDoor.png" },
-  { id: 3, name: "Gretzky's Twig", image: "/buttons/ryanDunn.png" },
-  { id: 4, name: "Bob Dylan's Guitar", image: "/buttons/charlieTree.png" }
+  { id: 1, name: "Og Wood", image: "/buttons/ogWood.png" },
+  { id: 2, name: "Frodo Door", image: "/buttons/frodoDoor.png" },
+  { id: 3, name: "Ryan Dunn", image: "/buttons/ryanDunn.png" },
+  { id: 4, name: "Charlie Tree", image: "/buttons/charlieTree.png" }
 ];
 
 export const entryPageItems = [

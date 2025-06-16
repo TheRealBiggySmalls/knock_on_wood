@@ -7,10 +7,19 @@ import { useOmniContext } from "@/context/omni-context";
 
 const today = new Date().toISOString().slice(0, 10);
 
+// Define a type for the message data
+interface Message {
+  id: string; // Document ID
+  username: string; // Username of the sender
+  text: string; // Message text
+  type: string; // Message type (e.g., "text", "image")
+  timestamp: unknown; // Timestamp of the message
+}
+
 const MessageThread = () => {
   const navigate = useNavigate();
   const { hasPostedToday, setHasPostedToday } = useOmniContext();
-  const [messages, setMessages] = useState<{username: string, text: string, type: string, timestamp: any}[]>([]);
+  const [messages, setMessages] = useState<{username: string, text: string, type: string, timestamp: unknown}[]>([]);
   const [input, setInput] = useState("");
   const [selectedType, setSelectedType] = useState<"need" | "lucky" | null>(null);
   const [loading, setLoading] = useState(true);
@@ -21,9 +30,21 @@ const MessageThread = () => {
   // fetch today's messages in real time
   useEffect(() => {
     setLoading(true);
-    const q = query(collection(db, "messages", today, "thread"), orderBy("timestamp"), limit(50));
+    const q = query(
+      collection(db, "messages", today, "thread"),
+      orderBy("timestamp"),
+      limit(50)
+    );
     const unsub = onSnapshot(q, (snap) => {
-      setMessages(snap.docs.map(doc => doc.data() as any));
+      setMessages(
+        snap.docs.map((doc) => ({
+          id: doc.id,
+          username: doc.data().username || "Unknown", // Default value if missing
+          text: doc.data().text || "",
+          type: doc.data().type || "text",
+          timestamp: doc.data().timestamp || null,
+        }))
+      );
       setLoading(false);
     });
     return () => unsub();

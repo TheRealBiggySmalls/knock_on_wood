@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import MusicPlayer from "@/components/music-player";
+import { MusicPlayerUI } from "@/components/music-player";
 import { useOmniContext } from "@/context/omni-context";
 import { mainScreenButtons, entryPageItems} from "@/constants/assets";
 
@@ -184,6 +184,7 @@ const MainScreen = () => {
           ))}
         </div>
 
+        <MusicPlayerUI />
       </div>
 
       <style>

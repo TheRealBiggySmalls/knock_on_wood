@@ -6,28 +6,11 @@ let globalTrackIndex: number | null = null;
 let globalSetters: Array<(idx: number) => void> = [];
 
 const MusicPlayer = () => {
-	const [, forceRerender] = useState(0); // for UI update
-	const [currentTrackIndex, setCurrentTrackIndex] = useState(() => {
-		if (globalTrackIndex !== null) return globalTrackIndex;
-		const idx = Math.floor(Math.random() * music.length);
-		globalTrackIndex = idx;
-		return idx;
-	});
-
-
 	useEffect(() => {
-		globalSetters.push(setCurrentTrackIndex);
-		return () => {
-			globalSetters = globalSetters.filter((fn) => fn !== setCurrentTrackIndex);
-		};
-	}, []);
-
-	useEffect(() => {
-		// create audio
 		if (!globalAudio) {
-			globalAudio = new Audio(music[currentTrackIndex].song);
+			globalAudio = new Audio(music[globalTrackIndex || 0].song);
 			globalAudio.loop = false;
-			globalAudio.volume = 0.5; // keep it a bit quieter
+			globalAudio.volume = 0.1;
 			globalAudio.onended = () => {
 				const nextIndex = (globalTrackIndex! + 1) % music.length;
 				globalTrackIndex = nextIndex;
@@ -36,14 +19,8 @@ const MusicPlayer = () => {
 				globalSetters.forEach((fn) => fn(nextIndex));
 			};
 			globalAudio.play();
-		} else {
-			// if audio exists but track index changed (e.g. on reload), sync UI
-			if (globalTrackIndex !== currentTrackIndex) {
-				setCurrentTrackIndex(globalTrackIndex!);
-			}
 		}
-		// cleanup
-		const cleanup = () => {
+		return () => {
 			if (globalAudio) {
 				globalAudio.pause();
 				globalAudio.currentTime = 0;
@@ -51,19 +28,20 @@ const MusicPlayer = () => {
 				globalTrackIndex = null;
 			}
 		};
-		window.addEventListener('beforeunload', cleanup);
-		return () => {
-			cleanup();
-			window.removeEventListener('beforeunload', cleanup);
-		};
 	}, []);
 
-	// keep UI in sync with globalTrackIndex
+	return null;
+};
+
+const MusicPlayerUI = () => {
+	const [currentTrackIndex, setCurrentTrackIndex] = useState(() => globalTrackIndex || 0);
+
 	useEffect(() => {
-		if (currentTrackIndex !== globalTrackIndex) {
-			setCurrentTrackIndex(globalTrackIndex!);
-		}
-	}, [currentTrackIndex]);
+		globalSetters.push(setCurrentTrackIndex);
+		return () => {
+			globalSetters = globalSetters.filter((fn) => fn !== setCurrentTrackIndex);
+		};
+	}, []);
 
 	return (
 		<div className="fixed bottom-0 left-0 w-full z-50 flex items-center justify-center pointer-events-none" style={{ background: "none" }}>
@@ -77,4 +55,4 @@ const MusicPlayer = () => {
 	);
 };
 
-export default MusicPlayer;
+export { MusicPlayer, MusicPlayerUI };
