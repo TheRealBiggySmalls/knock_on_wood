@@ -10,3 +10,6 @@ ios
 
 # editor etc
 .vscode/*
+
+# u know how it is
+package-lock.json

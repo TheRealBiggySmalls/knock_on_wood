@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, query, orderBy, getDocs, serverTimestamp, limit, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, query, orderBy, serverTimestamp, limit, onSnapshot } from "firebase/firestore";
 import { useOmniContext } from "@/context/omni-context";
 
 const today = new Date().toISOString().slice(0, 10);

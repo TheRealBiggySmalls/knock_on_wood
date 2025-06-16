@@ -1,19 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { db } from "@/lib/firebase";
-import { doc, updateDoc, setDoc, increment, getDoc, collection, getDocs, query, orderBy, limit, onSnapshot } from "firebase/firestore";
+import { doc, updateDoc, setDoc, increment, collection, getDocs, query, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { FirebaseError } from "firebase/app";
 import LuckForecastGraph from "@/components/luck-forecast-graph";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-
-const forecastLabels = [
-  { label: "Low", pct: 0.2, color: "#e53935" }, // red
-  { label: "Mild", pct: 0.4, color: "#fb8c00" }, // orange
-  { label: "Lucky", pct: 0.6, color: "#fbc02d" }, // yellow
-  { label: "Very Lucky", pct: 0.8, color: "#43a047" }, // green
-  { label: "Extremely Lucky", pct: 0.99, color: "#00796b" }, // deep green
-  { label: "Golden Eternal Luck Radiance", pct: 1.0, color: "linear-gradient(90deg, #ffe066 0%, #ffd700 50%, #fffbe6 100%)" } // radiant gold
-];
+import { forecastLabels } from "@/constants/assets";
 
 const LuckForecast = () => {
   const navigate = useNavigate();

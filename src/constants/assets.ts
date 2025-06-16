@@ -58,3 +58,12 @@ export const music = [
 		image: "/music/jgacktab.png",
 	},
 ];
+
+export const forecastLabels = [
+  { label: "Low", pct: 0.2, color: "#e53935" }, // red
+  { label: "Mild", pct: 0.4, color: "#fb8c00" }, // orange
+  { label: "Lucky", pct: 0.6, color: "#fbc02d" }, // yellow
+  { label: "Very Lucky", pct: 0.8, color: "#43a047" }, // green
+  { label: "Extremely Lucky", pct: 0.99, color: "#00796b" }, // deep green
+  { label: "Golden Eternal Luck Radiance", pct: 1.0, color: "linear-gradient(90deg, #ffe066 0%, #ffd700 50%, #fffbe6 100%)" } // radiant gold
+];
