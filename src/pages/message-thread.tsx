@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, query, orderBy, serverTimestamp, limit, onSnapshot } from "firebase/firestore";
 import { useOmniContext } from "@/context/omni-context";
+import "./message-thread.css"; // Ensure this CSS file exists or create it for styling
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -65,7 +66,7 @@ const MessageThread = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#e6e6e6] relative">
+    <div className="message-thread-background flex flex-col items-center justify-center min-h-screen bg-[#e6e6e6] relative">
       <div className="absolute top-4 left-4 z-20">
         <button
           onClick={() => navigate("/")}
@@ -87,7 +88,7 @@ const MessageThread = () => {
             messages.map((msg, i) => {
               let prompt = "";
               if (msg.type === 'need') {
-                prompt = "is hoping for some luck for ";
+                prompt = "needs some luck today ";
               } else if (msg.type === 'lucky') {
                 prompt = "is feeling lucky because ";
               }
@@ -111,7 +112,7 @@ const MessageThread = () => {
               disabled={hasPostedToday || submitting}
               onClick={() => setSelectedType('need')}
             >
-              I'm hoping for luck today for...
+              I'm need some luck today...
             </button>
             <button
               className="flex-1 bg-[#e0ffe0] border border-[#a5d6a7] rounded-lg px-2 py-1 text-xs text-[#1b5e20] font-semibold shadow-sm disabled:opacity-50"
