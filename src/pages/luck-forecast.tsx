@@ -135,7 +135,7 @@ const LuckForecast = () => {
           style={forecast === "Golden Eternal Luck Radiance"
             ? { background: forecastColor, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }
             : { color: forecastColor }}
-        >{forecast}</span> ({luckCount !== null ? luckCount : '...'})
+        >{forecast != "..." ? forecast : "Low"}</span> ({luckCount !== null ? luckCount : 0})
       </div>
       <div className="mt-8 w-full flex justify-center">
         <LuckForecastGraph today={today} allTimeHigh={allTimeHigh} />

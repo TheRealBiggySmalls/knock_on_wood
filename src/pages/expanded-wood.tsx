@@ -4,20 +4,28 @@ import { useState } from "react";
 import { expandedWoods } from "@/constants/assets"; 
 
 //AIDAN: this page is what pops up when you click on an item in the main screen.
-// It shows a full screen image of the item and plays a sound when you tap it.
-// It also has a back button to return to the main screen.
+//it shows a full screen image of the item and plays a sound when you tap it.
+//it also has a back button to return to the main screen.
 const ExpandedWood = () => {
   const { id } = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
+  //we have a list of audio players to allow spamming
 
   const item = expandedWoods[id as keyof typeof expandedWoods];
 
   const playWoodSound = () => {
     setIsPlaying(true);
-    // create and play audio
-    const audio = new Audio(item.sound);
+
+    //in constants ryanDunn default is ryanDunn1.mp3
+    let soundToPlay = item.sound;
+    if (item.name === "ryanDunn") {
+      const randomIndex = Math.floor(Math.random() * 8) + 1; //random ryanDunn sound
+      soundToPlay = `/sounds/ryanDunn${randomIndex}.mp3`;
+    }
+
+    const audio = new Audio(soundToPlay);
     audio.play().catch(console.error);
-    // reset playing state after a short time
+
     setTimeout(() => setIsPlaying(false), 300);
   };
 

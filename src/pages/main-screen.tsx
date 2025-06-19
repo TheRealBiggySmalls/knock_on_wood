@@ -54,7 +54,7 @@ const MainScreen = () => {
       {/* entry screen */}
       {!hasSeenEntry && (
         <div
-          className={`fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-[2500ms] ease-linear ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          className={`fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity ease-linear ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
           onClick={handleEntryClick}
           onTransitionEnd={handleTransitionEnd}
         >
@@ -62,7 +62,7 @@ const MainScreen = () => {
             src={entryPageItems[entryIndex].image}
             alt={entryPageItems[entryIndex].name}
             className="absolute inset-0 w-full h-full object-contain bg-black"
-            style={{ maxWidth: '100vw', maxHeight: '100vh', minWidth: '100vw', minHeight: '100vh', transition: 'opacity 2.5s linear' }}
+            style={{ maxWidth: '100vw', maxHeight: '100vh', minWidth: '100vw', minHeight: '100vh' }}
           />
         </div>
       )}
