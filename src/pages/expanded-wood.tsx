@@ -3,25 +3,22 @@ import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { expandedWoods } from "@/constants/assets"; 
 
-//AIDAN: this page is what pops up when you click on an item in the main screen.
+//EAMON: this page is what pops up when you click on an item in the main screen.
 //it shows a full screen image of the item and plays a sound when you tap it.
 //it also has a back button to return to the main screen.
 const ExpandedWood = () => {
   const { id } = useParams();
   const [isPlaying, setIsPlaying] = useState(false);
-  //we have a list of audio players to allow spamming
 
   const item = expandedWoods[id as keyof typeof expandedWoods];
 
   const playWoodSound = () => {
     setIsPlaying(true);
 
-    //in constants ryanDunn default is ryanDunn1.mp3
-    let soundToPlay = item.sound;
-    if (item.name === "ryanDunn") {
-      const randomIndex = Math.floor(Math.random() * 8) + 1; //random ryanDunn sound
-      soundToPlay = `/sounds/ryanDunn${randomIndex}.mp3`;
-    }
+    //list of sounds for each item. If they have one just play the first sound
+    let soundToPlay = item.sound.length === 1 
+      ? item.sound[0] 
+      : item.sound[Math.floor(Math.random() * item.sound.length)];
 
     const audio = new Audio(soundToPlay);
     audio.play().catch(console.error);

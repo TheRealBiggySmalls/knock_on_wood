@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, query, orderBy, serverTimestamp, limit, onSnapshot } from "firebase/firestore";
 import { useOmniContext } from "@/context/omni-context";
-import "./message-thread.css"; // Ensure this CSS file exists or create it for styling
+import "./starry-background.css";
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -66,7 +66,7 @@ const MessageThread = () => {
   };
 
   return (
-    <div className="message-thread-background flex flex-col items-center justify-center min-h-screen bg-[#e6e6e6] relative">
+    <div className="starry-background flex flex-col items-center justify-center min-h-screen bg-[#e6e6e6] relative">
       <div className="absolute top-4 left-4 z-20">
         <button
           onClick={() => navigate("/")}

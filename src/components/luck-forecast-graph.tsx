@@ -1,15 +1,7 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
-
-const forecastLabels = [
-  { label: "Low", pct: 0.2, color: "#e53935" }, // red
-  { label: "Mild", pct: 0.4, color: "#fb8c00" }, // orange
-  { label: "Lucky", pct: 0.6, color: "#fbc02d" }, // yellow
-  { label: "Very Lucky", pct: 0.8, color: "#43a047" }, // green
-  { label: "Extremely Lucky", pct: 0.99, color: "#00796b" }, // deep green
-  { label: "Golden Eternal Luck Radiance", pct: 1.0, color: "radial-gradient(circle at 60% 40%, #fffbe6 0%, #ffe066 40%, #ffd700 80%, #fffbe6 100%)" } // radiant gold
-];
+import { forecastLabels } from "@/constants/assets";
 
 function getForecastColor(val: number, allTimeHigh: number) {
   if (allTimeHigh === 0) return forecastLabels[0].color;

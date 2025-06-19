@@ -6,6 +6,7 @@ import LuckForecastGraph from "@/components/luck-forecast-graph";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { forecastLabels } from "@/constants/assets";
+import "./starry-background.css";
 
 const LuckForecast = () => {
   const navigate = useNavigate();
@@ -95,7 +96,7 @@ const LuckForecast = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-green-50 overflow-hidden">
+    <div className="starry-background flex flex-col items-center justify-center min-h-screen bg-[#e6e6e6] relative">
       {/* emoji animations */}
       <div style={{ pointerEvents: 'none', position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 50 }}>
         {clovers.map(({id, left}) => (
