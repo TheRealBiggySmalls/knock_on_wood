@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { forecastLabels } from "@/constants/assets";
 
 function getForecastColor(val: number, allTimeHigh: number) {
@@ -30,16 +30,17 @@ const LuckForecastGraph = ({ today, allTimeHigh }: { today: string; allTimeHigh:
     const fetchWeek = async () => {
       setLoading(true);
       const days = getLast7Days();
-      // Fetch all docs once, then filter for the last 7 days
       const ref = collection(db, "luck-count");
-      const snap = await getDocs(ref);
-      const docsById = Object.fromEntries(snap.docs.map(doc => [doc.id, doc]));
-      const results = days.map(date => {
-        const docSnap = docsById[date];
-        return docSnap ? (docSnap.data().count || 0) : 0;
+      const unsub = onSnapshot(ref, (snap) => {
+        const docsById = Object.fromEntries(snap.docs.map(doc => [doc.id, doc]));
+        const results = days.map(date => {
+          const docSnap = docsById[date];
+          return docSnap ? (docSnap.data().count || 0) : 0;
+        });
+        setWeekData(results);
+        setLoading(false);
       });
-      setWeekData(results);
-      setLoading(false);
+      return () => unsub();
     };
     fetchWeek();
   }, [today]);

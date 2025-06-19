@@ -90,7 +90,7 @@ const LuckForecast = () => {
     } else {
       const pct = luckCount / allTimeHigh;
       const found = forecastLabels.find(f => pct <= f.pct);
-      forecast = found ? found.label : "Extremely Lucky";
+      forecast = found ? found.label : "Low";
       forecastColor = found ? found.color : forecastLabels[4].color;
     }
   }
@@ -130,7 +130,7 @@ const LuckForecast = () => {
       >
         🍀
       </button>
-      <div className="mt-2 text-base text-gray-800 font-medium">
+      <div className="mt-2 text-base text-gray-200 font-medium">
         Luck forecast is: <span
           className="font-bold"
           style={forecast === "Golden Eternal Luck Radiance"
