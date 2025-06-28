@@ -111,7 +111,9 @@ const LuckForecast = () => {
               zIndex: 50,
               animation: 'clover-float 1.4s cubic-bezier(.4,1.6,.6,1) forwards'
             }}
-          >🍀</span>
+          >
+            <img src="/random/floatClover.png" className="inline-block w-14 h-14 ml-2" />
+          </span>
         ))}
       </div>
       <div className="absolute top-4 left-4 z-20">
