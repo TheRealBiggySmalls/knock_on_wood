@@ -55,4 +55,26 @@ const MusicPlayerUI = () => {
 	);
 };
 
-export { MusicPlayer, MusicPlayerUI };
+//full profile available in profile popup
+const MusicProfileUI = () => {
+	const [currentTrackIndex, setCurrentTrackIndex] = useState(() => globalTrackIndex || 0);
+
+	useEffect(() => {
+		globalSetters.push(setCurrentTrackIndex);
+		return () => {
+			globalSetters = globalSetters.filter((fn) => fn !== setCurrentTrackIndex);
+		};
+	}, []);
+
+	return (
+		<div className="z-50 flex items-center justify-center pointer-events-none" style={{ background: "none" }}>
+			<img
+				src={music[currentTrackIndex].fullImage}
+				className="h-32 md:h-48 w-auto object-contain pointer-events-auto"
+				style={{ maxWidth: '90vw' }}
+			/>
+		</div>
+	);
+}
+
+export { MusicPlayer, MusicPlayerUI , MusicProfileUI};

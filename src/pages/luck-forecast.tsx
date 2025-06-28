@@ -125,10 +125,9 @@ const LuckForecast = () => {
       <button
         onClick={handleAddLuck}
         disabled={addingLuck}
-        className="text-3xl px-6 py-2 rounded-full bg-green-200 hover:bg-green-300 active:scale-95 transition-all shadow-lg select-none"
         style={{ pointerEvents: addingLuck ? 'none' : 'auto' }}
       >
-        🍀
+        <img src="/buttons/clovernew2.png" className="inline-block w-24 h-24 ml-2" />
       </button>
       <div className="mt-2 text-base text-gray-200 font-medium">
         Luck forecast is: <span

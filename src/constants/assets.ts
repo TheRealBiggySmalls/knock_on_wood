@@ -51,6 +51,7 @@ export const music = [
 		artist: "backtothemoney",
 		song: "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/songs%2Frest.mp3?alt=media&token=d19ab62a-27d9-4ba5-b4d3-8bbf585e8f4c",
 		image: "/music/b2mtab.png",
+        fullImage: "/music/b2mProfile.png",
 	},
 	{
 		id: 2,
@@ -58,6 +59,7 @@ export const music = [
 		artist: "Will Alone",
 		song: "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/songs%2Fmain-theme.mp3?alt=media&token=84658e63-62f3-4bc6-a34e-fd227dd530ad",
 		image: "/music/bywilltab.png",
+        fullImage: "/music/bywillaloneProfile.png",
 	},
 	{
 		id: 3,
@@ -65,6 +67,7 @@ export const music = [
 		artist: "jgack",
 		song: "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/songs%2Flike-a-motion-picture.mp3?alt=media&token=0d4211aa-13a4-4390-bbc4-59ff712aed5c",
 		image: "/music/jgacktab.png",
+        fullImage: "/music/JgackPorfile.png",
 	},
 ];
 

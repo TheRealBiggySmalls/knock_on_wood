@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import { MusicPlayerUI } from "@/components/music-player";
+import { MusicPlayerUI, MusicProfileUI } from "@/components/music-player";
 import { useOmniContext } from "@/context/omni-context";
 import { mainScreenButtons, entryPageItems} from "@/constants/assets";
 
@@ -153,14 +153,15 @@ const MainScreen = () => {
               >Save</button>
               {/* luck and chat navigation */}
               <div className="flex w-full gap-4 mt-4">
-                <Link to="/luck-forecast" className="flex-1 flex flex-col items-center justify-center py-2 rounded bg-green-100 hover:bg-green-200 transition-all">
-                  <span className="text-2xl">🍀</span>
-                  <span className="text-xs mt-1 text-green-900 font-medium">Luck Forecast</span>
+                <Link to="/luck-forecast" className="flex-1 flex flex-col items-center justify-center">
+                  <img src="/buttons/clovernew2.png" className="w-12 h-12" />
                 </Link>
-                <Link to="/message-thread" className="flex-1 flex flex-col items-center justify-center py-2 rounded bg-blue-100 hover:bg-blue-200 transition-all">
-                  <span className="text-2xl">🤗</span>
-                  <span className="text-xs mt-1 text-blue-900 font-medium">Message Thread</span>
+                <Link to="/message-thread" className="flex-1 flex flex-col items-center justify-center">
+                  <img src="/buttons/chat2.png" className="w-12 h-12" />
                 </Link>
+              </div>
+              <div className="mt-4">
+                <MusicProfileUI/>
               </div>
             </div>
           </div>

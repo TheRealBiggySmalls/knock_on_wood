@@ -75,7 +75,7 @@ const MessageThread = () => {
           <ArrowLeft size={24} />
         </button>
       </div>
-      <div className="w-full max-w-md flex flex-col rounded-2xl shadow-lg border-4 border-[#bcbcbc] bg-[#f7f7f7] mt-16 mb-4 flex-1 overflow-hidden" style={{height: '70vh'}}>
+      <div className="w-full max-w-md flex flex-col rounded-2xl shadow-lg border-4 border-[#bcbcbc] bg-[#f7f7f7] mt-10 mb-10 flex-1 overflow-hidden" style={{height: '70vh'}}>
         <div className="flex items-center justify-center py-2 bg-[#d1d5db] border-b-2 border-[#bcbcbc] text-lg font-bold tracking-wide text-[#222]" style={{fontFamily: 'Verdana, Geneva, Tahoma, sans-serif', letterSpacing: 1}}>
           <span>💬 Feeling Lucky?</span>
         </div>
@@ -127,7 +127,7 @@ const MessageThread = () => {
               <input
                 type="text"
                 className="flex-1 rounded-lg border px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-                placeholder={selectedType === 'need' ? 'I need luck today for...' : "I'm feeling lucky because..."}
+                placeholder={selectedType === 'need' ? 'I need some luck today...' : "I'm feeling lucky because..."}
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 disabled={submitting}
