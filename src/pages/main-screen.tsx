@@ -10,13 +10,16 @@ const MainScreen = () => {
   const [fadeOut, setFadeOut] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileName, setProfileName] = useState("");
+  const [profileCity, setProfileCity] = useState("");
   const [profilePic, setProfilePic] = useState<string | null>(null);
 
   // load local profile
   useEffect(() => {
     const name = localStorage.getItem("profileName");
     const pic = localStorage.getItem("profilePic");
+    const city = localStorage.getItem("profileCity");
     if (name) setProfileName(name);
+    if (city) setProfileCity(city);
     if (pic) setProfilePic(pic);
   }, []);
 
@@ -33,6 +36,7 @@ const MainScreen = () => {
 
   const handleProfileSave = () => {
     localStorage.setItem("profileName", profileName);
+    localStorage.setItem("profileCity", profileCity);
     if (profilePic) localStorage.setItem("profilePic", profilePic);
     setShowProfileModal(false);
   };
@@ -146,6 +150,13 @@ const MainScreen = () => {
                 placeholder="Enter your name"
                 value={profileName}
                 onChange={e => setProfileName(e.target.value)}
+              />
+              <input
+                type="text"
+                className="border rounded px-2 py-1 w-full text-center"
+                placeholder="Enter your city"
+                value={profileCity}
+                onChange={e => setProfileCity(e.target.value)}
               />
               <button
                 className="mt-2 bg-black text-white rounded px-4 py-2 hover:bg-gray-800"

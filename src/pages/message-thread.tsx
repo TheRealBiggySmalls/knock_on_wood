@@ -11,13 +11,14 @@ const today = new Date().toISOString().slice(0, 10);
 const MessageThread = () => {
   const navigate = useNavigate();
   const { hasPostedToday, setHasPostedToday } = useOmniContext();
-  const [messages, setMessages] = useState<{username: string, text: string, type: string, timestamp: unknown}[]>([]);
+  const [messages, setMessages] = useState<{username: string, city: String, text: string, type: string, timestamp: unknown}[]>([]);
   const [input, setInput] = useState("");
   const [selectedType, setSelectedType] = useState<"need" | "lucky" | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const threadRef = useRef<HTMLDivElement>(null);
   const username = localStorage.getItem("profileName") || "Anonymous";
+  const city = localStorage.getItem("profileCity") || "";
 
   // fetch today's messages in real time
   useEffect(() => {
@@ -32,6 +33,7 @@ const MessageThread = () => {
         snap.docs.map((doc) => ({
           id: doc.id,
           username: doc.data().username || "Unknown", 
+          city: doc.data().city || "",
           text: doc.data().text || "",
           type: doc.data().type || "text",
           timestamp: doc.data().timestamp || null,
@@ -55,6 +57,7 @@ const MessageThread = () => {
     setSubmitting(true);
     await addDoc(collection(db, "messages", today, "thread"), {
       username,
+      city,
       text: input.trim(),
       type: selectedType,
       timestamp: serverTimestamp(),
@@ -95,7 +98,9 @@ const MessageThread = () => {
               return (
                 <div key={i} className={`rounded-lg px-3 py-2 flex flex-col shadow-sm ${msg.type === 'need' ? 'bg-[#fff3e0] border border-[#ffcc80]' : 'bg-[#e0ffe0] border border-[#a5d6a7]'}`}
                   style={{maxWidth: '90%', alignSelf: msg.username === username ? 'flex-end' : 'flex-start'}}>
-                  <span className="text-xs text-gray-500 mb-1" style={{fontFamily: 'monospace'}}>{msg.username}</span>
+                  <span className="text-xs text-gray-500 mb-1" style={{fontFamily: 'monospace'}}>
+                    {msg.username}{msg.city ? ` (${msg.city})` : ""}
+                  </span>
                   <span className="text-sm text-[#222]" style={{wordBreak: 'break-word'}}>
                     <em>{prompt}</em>{msg.text}
                   </span>
