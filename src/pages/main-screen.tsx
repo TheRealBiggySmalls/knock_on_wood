@@ -54,8 +54,8 @@ const MainScreen = () => {
   const [entryIndex] = useState(() => Math.floor(Math.random() * entryPageItems.length));
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* entry screen */}
+    <>
+      {/* entry screen - fixed, covers everything when active */}
       {!hasSeenEntry && (
         <div
           className={`fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity ease-linear ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
@@ -71,7 +71,7 @@ const MainScreen = () => {
         </div>
       )}
 
-      {/* video bground */}
+      {/* video background - fixed, always behind */}
       <video
         ref={videoRef}
         autoPlay
@@ -84,8 +84,8 @@ const MainScreen = () => {
         <source src="/backgrounds/backvideo.mp4" type="video/mp4" />
       </video>
 
-      {/* dark overlay for better button visibility */}
-      <div className="fixed inset-0 w-screen h-screen bg-black/30 z-0" style={{ minWidth: '100vw', minHeight: '100vh' }} />
+      {/* dark overlay - fixed, above video */}
+      <div className="fixed inset-0 w-screen h-screen bg-black/30 z-10" style={{ minWidth: '100vw', minHeight: '100vh' }} />
 
       {/* user icon - always top right */}
       <button
@@ -163,8 +163,8 @@ const MainScreen = () => {
         </div>
       )}
 
-    {/* main stuff */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-8 w-full min-h-[60vh]">
+      {/* main content - relative, above backgrounds */}
+      <div className="relative z-20 flex-1 flex flex-col items-center justify-center p-4 sm:p-8 w-full min-h-[60vh]">
         <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-xs sm:max-w-sm aspect-square">
           {mainScreenButtons.map((button) => (
             <Link key={button.id} to={`/item/${button.id}`} className="w-full h-full flex items-center justify-center">
@@ -197,7 +197,7 @@ const MainScreen = () => {
           }
         `}
       </style>
-    </div>
+    </>
   );
 };
 

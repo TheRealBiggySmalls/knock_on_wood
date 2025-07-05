@@ -37,9 +37,9 @@ const ExpandedWood = () => {
   return (
     <div className="min-h-screen w-screen relative overflow-hidden bg-black">
       {/* back button */}
-      <div className="absolute top-4 left-4 z-20">
-        <Link to="/" className="bg-black/50 backdrop-blur-sm rounded-full p-2 text-white hover:bg-black/70 transition-colors">
-          <ArrowLeft size={24} />
+      <div className="fixed top-4 left-4 z-20">
+        <Link to="/" className="bg-transparent p-0 m-0">
+          <img src="/random/back-button-icon-11.png" alt="Back" className="w-20 h-20" style={{ display: 'block' }} />
         </Link>
       </div>
 
@@ -55,11 +55,6 @@ const ExpandedWood = () => {
           className="w-full h-full object-cover bg-black"
           style={{ minWidth: '100vw', minHeight: '100vh', width: '100vw', height: '100vh', objectFit: 'cover' }}
         />
-      </div>
-
-      {/* tap instruction overlay */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-black/70 backdrop-blur-sm rounded-full px-6 py-3 text-white text-sm font-medium z-10">
-        Tap anywhere to play wood sound
       </div>
 
       {/* visual feedback when playing */}
