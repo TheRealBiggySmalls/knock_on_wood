@@ -184,9 +184,7 @@ const MainScreen = () => {
             </Link>
           ))}
         </div>
-        <div className="w-full max-w-xs sm:max-w-sm mt-6">
           <MusicPlayerUI />
-        </div>
       </div>
     </div>
   );
