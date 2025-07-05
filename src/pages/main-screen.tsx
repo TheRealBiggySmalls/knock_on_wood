@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import { MusicPlayerUI, MusicProfileUI } from "@/components/music-player";
 import { useOmniContext } from "@/context/omni-context";
-import { mainScreenButtons, entryPageItems} from "@/constants/assets";
+import { mainScreenButtons, entryPageItems } from "@/constants/assets";
 
 const MainScreen = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -54,51 +54,50 @@ const MainScreen = () => {
   const [entryIndex] = useState(() => Math.floor(Math.random() * entryPageItems.length));
 
   return (
-    <>
-      {/* entry screen - fixed, covers everything when active */}
+    <div className="relative min-h-screen w-full overflow-hidden bg-black">
+      {/* entry screen overlay */}
       {!hasSeenEntry && (
         <div
-          className={`fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity ease-linear ${fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          className={`absolute inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-300 ease-linear ${
+            fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
           onClick={handleEntryClick}
           onTransitionEnd={handleTransitionEnd}
         >
           <img
             src={entryPageItems[entryIndex].image}
             alt={entryPageItems[entryIndex].name}
-            className="absolute inset-0 w-full h-full object-contain bg-black"
-            style={{ maxWidth: '100vw', maxHeight: '100vh', minWidth: '100vw', minHeight: '100vh' }}
+            className="w-full h-full object-contain"
           />
         </div>
       )}
 
-      {/* video background - fixed, always behind */}
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="fixed inset-0 w-screen h-screen object-cover z-0"
-        style={{ minWidth: '100vw', minHeight: '100vh', width: '100vw', height: '100vh', objectFit: 'cover' }}
-      >
-        <source src="/backgrounds/backvideo.mp4" type="video/mp4" />
-      </video>
+      {/* background */}
+      <div className="absolute inset-0 z-0">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+        >
+          <source src="/backgrounds/backvideo.mp4" type="video/mp4" />
+        </video>
+        {/* dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
 
-      {/* dark overlay - fixed, above video */}
-      <div className="fixed inset-0 w-screen h-screen bg-black/30 z-10" style={{ minWidth: '100vw', minHeight: '100vh' }} />
-
-      {/* user icon - always top right */}
+      {/* user icon */}
       <button
-        className="fixed top-4 right-4 z-30 flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 overflow-hidden p-0 rounded-full shadow-lg"
-        style={{ backdropFilter: 'blur(2px)' }}
+        className="fixed top-4 right-4 z-30 flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 rounded-full shadow-lg backdrop-blur-sm overflow-hidden"
         onClick={() => setShowProfileModal(true)}
       >
         {profilePic ? (
           <img
             src={profilePic}
             alt="Profile"
-            className="w-10 h-10 object-cover p-0 m-0 rounded-full"
-            style={{ aspectRatio: '1 / 1', borderRadius: '50%', padding: 0, margin: 0 }}
+            className="w-full h-full object-cover rounded-full"
           />
         ) : (
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 text-white">
@@ -109,16 +108,20 @@ const MainScreen = () => {
 
       {/* profile modal */}
       {showProfileModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-white rounded-xl p-6 w-80 max-w-[90vw] flex flex-col gap-4 relative">
-            <button className="absolute top-2 right-2 text-gray-500 hover:text-black" onClick={() => setShowProfileModal(false)}>&times;</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-xl p-6 w-80 max-w-full flex flex-col gap-4 relative">
+            <button 
+              className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black text-2xl leading-none" 
+              onClick={() => setShowProfileModal(false)}
+            >
+              &times;
+            </button>
             <div className="flex flex-col items-center gap-2">
               <label htmlFor="profile-pic" className="cursor-pointer">
                 <img
                   src={profilePic || "/placeholder.svg"}
                   alt="Profile"
-                  className="w-20 h-20 object-cover border border-gray-300 p-0 m-0 rounded-none"
-                  style={{ aspectRatio: '1 / 1', borderRadius: 0, padding: 0, margin: 0 }}
+                  className="w-20 h-20 object-cover border border-gray-300 rounded-none"
                 />
                 <input
                   id="profile-pic"
@@ -143,28 +146,30 @@ const MainScreen = () => {
                 onChange={e => setProfileCity(e.target.value)}
               />
               <button
-                className="mt-2 bg-black text-white rounded px-4 py-2 hover:bg-gray-800"
+                className="mt-2 bg-black text-white rounded px-4 py-2 hover:bg-gray-800 transition-colors"
                 onClick={handleProfileSave}
-              >Save</button>
+              >
+                Save
+              </button>
               {/* luck and chat navigation */}
               <div className="flex w-full gap-4 mt-4">
                 <Link to="/luck-forecast" className="flex-1 flex flex-col items-center justify-center">
-                  <img src="/buttons/clovernew2.png" className="w-12 h-12" />
+                  <img src="/buttons/clovernew2.png" alt="Luck Forecast" className="w-12 h-12" />
                 </Link>
                 <Link to="/message-thread" className="flex-1 flex flex-col items-center justify-center">
-                  <img src="/buttons/chat2.png" className="w-12 h-12" />
+                  <img src="/buttons/chat2.png" alt="Messages" className="w-12 h-12" />
                 </Link>
               </div>
               <div className="mt-4">
-                <MusicProfileUI/>
+                <MusicProfileUI />
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* main content - relative, above backgrounds */}
-      <div className="relative z-20 flex-1 flex flex-col items-center justify-center p-4 sm:p-8 w-full min-h-[60vh]">
+      {/* main content */}
+      <div className="relative z-20 flex flex-col items-center justify-center min-h-screen p-4 sm:p-8">
         <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-xs sm:max-w-sm aspect-square">
           {mainScreenButtons.map((button) => (
             <Link key={button.id} to={`/item/${button.id}`} className="w-full h-full flex items-center justify-center">
@@ -174,7 +179,6 @@ const MainScreen = () => {
                   alt={button.name}
                   className="w-full h-full object-contain rounded-lg select-none"
                   draggable={false}
-                  style={{ maxWidth: '100%', maxHeight: '100%' }}
                 />
               </div>
             </Link>
@@ -184,20 +188,7 @@ const MainScreen = () => {
           <MusicPlayerUI />
         </div>
       </div>
-
-      <style>
-        {`
-          @keyframes scroll {
-            0% {
-              transform: translateX(100%);
-            }
-            100% {
-              transform: translateX(-100%);
-            }
-          }
-        `}
-      </style>
-    </>
+    </div>
   );
 };
 
