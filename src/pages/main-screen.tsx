@@ -78,55 +78,39 @@ const MainScreen = () => {
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="fixed inset-0 w-screen h-screen object-cover z-0"
+        style={{ minWidth: '100vw', minHeight: '100vh', width: '100vw', height: '100vh', objectFit: 'cover' }}
       >
         <source src="/backgrounds/backvideo.mp4" type="video/mp4" />
       </video>
 
       {/* dark overlay for better button visibility */}
-      <div className="absolute inset-0 bg-black/30" />
-      
-      {/* status bar simulation - delete */}
-      <div className="relative z-10 flex justify-between items-center px-4 py-2 text-white text-sm font-medium">
-        <div className="flex items-center gap-1">
-          <div className="flex gap-1">
-            <div className="w-1 h-1 bg-white rounded-full"></div>
-            <div className="w-1 h-1 bg-white rounded-full"></div>
-            <div className="w-1 h-1 bg-white rounded-full"></div>
-          </div>
-          <span className="ml-1">AT&T LTE</span>
-        </div>
-        <div>12:09 PM</div>
-        <div className="flex items-center gap-1">
-          <span>88%</span>
-          <div className="w-6 h-3 border border-white rounded-sm">
-            <div className="w-5 h-2 bg-white rounded-sm m-0.5"></div>
-          </div>
-        </div>
-        {/* user icon */}
-        <button
-          className="ml-4 flex items-center justify-center w-8 h-8 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 overflow-hidden p-0 rounded-none"
-          onClick={() => setShowProfileModal(true)}
-        >
-          {profilePic ? (
-            <img
-              src={profilePic}
-              alt="Profile"
-              className="w-8 h-8 object-cover p-0 m-0 rounded-none"
-              style={{ aspectRatio: '1 / 1', borderRadius: 0, padding: 0, margin: 0 }}
-            />
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-white">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.75z" />
-            </svg>
-          )}
-        </button>
-      </div>
+      <div className="fixed inset-0 w-screen h-screen bg-black/30 z-0" style={{ minWidth: '100vw', minHeight: '100vh' }} />
+
+      {/* user icon - always top right */}
+      <button
+        className="fixed top-4 right-4 z-30 flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 overflow-hidden p-0 rounded-full shadow-lg"
+        style={{ backdropFilter: 'blur(2px)' }}
+        onClick={() => setShowProfileModal(true)}
+      >
+        {profilePic ? (
+          <img
+            src={profilePic}
+            alt="Profile"
+            className="w-10 h-10 object-cover p-0 m-0 rounded-full"
+            style={{ aspectRatio: '1 / 1', borderRadius: '50%', padding: 0, margin: 0 }}
+          />
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 text-white">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.75z" />
+          </svg>
+        )}
+      </button>
 
       {/* profile modal */}
       {showProfileModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="bg-white rounded-xl p-6 w-80 flex flex-col gap-4 relative">
+          <div className="bg-white rounded-xl p-6 w-80 max-w-[90vw] flex flex-col gap-4 relative">
             <button className="absolute top-2 right-2 text-gray-500 hover:text-black" onClick={() => setShowProfileModal(false)}>&times;</button>
             <div className="flex flex-col items-center gap-2">
               <label htmlFor="profile-pic" className="cursor-pointer">
@@ -180,23 +164,25 @@ const MainScreen = () => {
       )}
 
     {/* main stuff */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8">
-        <div className="grid grid-cols-2 gap-4 w-full max-w-sm mb-8">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-8 w-full min-h-[60vh]">
+        <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-xs sm:max-w-sm aspect-square">
           {mainScreenButtons.map((button) => (
-            <Link key={button.id} to={`/item/${button.id}`}>
-              <div className="hover:scale-105 active:scale-95 transition-transform duration-200">
+            <Link key={button.id} to={`/item/${button.id}`} className="w-full h-full flex items-center justify-center">
+              <div className="w-full h-full aspect-square hover:scale-105 active:scale-95 transition-transform duration-200 flex items-center justify-center">
                 <img
                   src={button.image}
                   alt={button.name}
-                  className="w-full h-auto object-contain rounded-lg select-none"
+                  className="w-full h-full object-contain rounded-lg select-none"
                   draggable={false}
+                  style={{ maxWidth: '100%', maxHeight: '100%' }}
                 />
               </div>
             </Link>
           ))}
         </div>
-
-        <MusicPlayerUI />
+        <div className="w-full max-w-xs sm:max-w-sm mt-6">
+          <MusicPlayerUI />
+        </div>
       </div>
 
       <style>

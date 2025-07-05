@@ -11,7 +11,7 @@ const today = new Date().toISOString().slice(0, 10);
 const MessageThread = () => {
   const navigate = useNavigate();
   const { hasPostedToday, setHasPostedToday } = useOmniContext();
-  const [messages, setMessages] = useState<{username: string, city: String, text: string, type: string, timestamp: unknown}[]>([]);
+  const [messages, setMessages] = useState<{username: string, city: string, text: string, type: string, timestamp: unknown}[]>([]);
   const [input, setInput] = useState("");
   const [selectedType, setSelectedType] = useState<"need" | "lucky" | null>(null);
   const [loading, setLoading] = useState(true);
