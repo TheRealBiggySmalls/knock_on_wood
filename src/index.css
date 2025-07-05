@@ -138,3 +138,13 @@
     -webkit-transform: translateZ(0);
   }
 }
+
+.will-change-transform {
+  will-change: transform;
+}
+
+/* optimize images */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
+}

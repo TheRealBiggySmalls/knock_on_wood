@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { MusicPlayerUI, MusicProfileUI } from "@/components/music-player";
 import { useOmniContext } from "@/context/omni-context";
-import { mainScreenButtons, entryPageItems } from "@/constants/assets";
+import { mainScreenButtons, entryPageItems, expandedWoods } from "@/constants/assets";
 
+{/*NOTE: expanded wood is rendered here locally instead of routed as a new page for better performance of mounting/unmounting video/image components */}
 const MainScreen = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const { hasSeenEntry, setHasSeenEntry } = useOmniContext();
@@ -12,6 +13,10 @@ const MainScreen = () => {
   const [profileName, setProfileName] = useState("");
   const [profileCity, setProfileCity] = useState("");
   const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [expandedWoodId, setExpandedWoodId] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageCache, setImageCache] = useState<{[key: string]: boolean}>({});
 
   // load local profile
   useEffect(() => {
@@ -52,6 +57,37 @@ const MainScreen = () => {
   };
 
   const [entryIndex] = useState(() => Math.floor(Math.random() * entryPageItems.length));
+
+  // preload and cache expanded wood images on mount
+  useEffect(() => {
+    const cache: {[key: string]: boolean} = {};
+    Object.entries(expandedWoods).forEach(([id, item]) => {
+      const img = new window.Image();
+      img.src = item.image;
+      img.onload = () => {
+        cache[id] = true;
+        setImageCache(prev => ({ ...prev, [id]: true }));
+      };
+    });
+  }, []);
+
+  // expanded wood modal logic
+  const expandedWoodItem = useMemo(() => expandedWoodId ? expandedWoods[expandedWoodId as keyof typeof expandedWoods] : null, [expandedWoodId]);
+
+  const playWoodSound = useCallback(() => {
+    if (!expandedWoodItem || isPlaying) return;
+    setIsPlaying(true);
+    const soundToPlay = expandedWoodItem.sound.length === 1
+      ? expandedWoodItem.sound[0]
+      : expandedWoodItem.sound[Math.floor(Math.random() * expandedWoodItem.sound.length)];
+    const audio = new Audio(soundToPlay);
+    audio.play().catch(console.error);
+    setTimeout(() => setIsPlaying(false), 300);
+  }, [expandedWoodItem, isPlaying]);
+
+  const handleImageLoad = useCallback(() => {
+    setImageLoaded(true);
+  }, []);
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black">
@@ -168,11 +204,52 @@ const MainScreen = () => {
         </div>
       )}
 
+      {/* expanded Wood Modal Overlay */}
+      {expandedWoodItem && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90">
+          {/* back button */}
+          <button
+            className="absolute top-4 left-4 z-20 bg-transparent p-0 m-0"
+            onClick={() => setExpandedWoodId(null)}
+            aria-label="Back"
+          >
+            <img src="/random/back-button-icon-11.png" alt="Back" className="w-20 h-20" />
+          </button>
+          {/* full screen image */}
+          <div
+            className={`absolute inset-0 cursor-pointer transition-transform duration-200 ${
+              isPlaying ? 'scale-95' : 'scale-100'
+            } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onClick={playWoodSound}
+          >
+            <img
+              src={expandedWoodItem.image}
+              alt={expandedWoodItem.name}
+              className="w-full h-full object-cover"
+              onLoad={handleImageLoad}
+              style={imageCache[expandedWoodId || ''] ? { filter: 'none' } : { filter: 'blur(2px)' }}
+            />
+          </div>
+          {/* visual feedback when playing */}
+          {isPlaying && (
+            <div className="absolute inset-0 bg-white/20 pointer-events-none animate-pulse z-10" />
+          )}
+        </div>
+      )}
+
       {/* main content */}
       <div className="relative z-20 flex flex-col items-center justify-center min-h-screen p-4 sm:p-8">
         <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full max-w-xs sm:max-w-sm aspect-square">
           {mainScreenButtons.map((button) => (
-            <Link key={button.id} to={`/item/${button.id}`} className="w-full h-full flex items-center justify-center">
+            <button
+              key={button.id}
+              className="w-full h-full flex items-center justify-center bg-transparent border-none p-0 m-0"
+              onClick={() => {
+                setExpandedWoodId(String(button.id));
+                setImageLoaded(false);
+              }}
+              aria-label={button.name}
+            >
               <div className="w-full h-full aspect-square hover:scale-105 active:scale-95 transition-transform duration-200 flex items-center justify-center">
                 <img
                   src={button.image}
@@ -181,7 +258,7 @@ const MainScreen = () => {
                   draggable={false}
                 />
               </div>
-            </Link>
+            </button>
           ))}
         </div>
           <MusicPlayerUI />
