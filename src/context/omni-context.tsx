@@ -5,6 +5,7 @@ interface OmniContextType {
   setHasSeenEntry: (seen: boolean) => void;
   hasPostedToday: boolean;
   setHasPostedToday: (posted: boolean) => void;
+  isOnline: boolean;
 }
 
 //Aidan: this file is kind of tricky, it basically manages states and information across the app
@@ -27,6 +28,20 @@ export const OmniContextProvider = ({
   const [hasPostedToday, setHasPostedTodayState] = useState(() => {
     return localStorage.getItem("hasPosted") === today;
   });
+
+  // play sounds based on connection status
+  const [isOnline, setIsOnline] = useState(() => typeof navigator !== 'undefined' ? navigator.onLine : true);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // keep localStorage in sync when setHasPostedToday is called
   const setHasPostedToday = (posted: boolean) => {
@@ -56,7 +71,8 @@ export const OmniContextProvider = ({
         hasSeenEntry, 
         setHasSeenEntry,
         hasPostedToday,
-        setHasPostedToday
+        setHasPostedToday,
+        isOnline
       }}
     >
       {children}
@@ -69,4 +85,3 @@ export const useOmniContext = () => {
   if (!context) throw new Error("OmniContext must be used within OmniContextProvider");
   return context;
 };
-

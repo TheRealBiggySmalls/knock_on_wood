@@ -1,14 +1,17 @@
+import { Backpack } from "lucide-react";
 
 export const expandedWoods = {
   "1": { 
     name: "ogWood", 
     image: "/expanded/screen1.png",
-    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fogwood.mp3?alt=media&token=46626b72-ed86-4960-9091-cc2493bf2d1e"]
+    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2FogWoodNew.mp3?alt=media&token=44b61a64-5a60-4f9a-889c-61d30766adfe"],
+    backupSound: ["/sounds/ogWoodNew.mp3"]
   },
   "2": { 
     name: "frodoDoor", 
     image: "/expanded/screen2.png",
-    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Faltwood.mp3?alt=media&token=023d90cc-3a74-4ba1-8f2a-8c4667c7d55f"]
+    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Faltwood.mp3?alt=media&token=023d90cc-3a74-4ba1-8f2a-8c4667c7d55f"],
+    backupSound: ["/sounds/altwood.mp3"]
   },
   "3": { 
     name: "ryanDunn", 
@@ -22,12 +25,14 @@ export const expandedWoods = {
         "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2FryanDunn6.mp3?alt=media&token=bec6330c-7ccf-4ce6-9dd2-2efe6fd205d2",
         "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2FryanDunn7.mp3?alt=media&token=b733085c-adeb-426a-878d-c1ce714867e5",
         "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2FryanDunn8.mp3?alt=media&token=1e34a5a2-b81e-4fa8-bcc3-ddfc4de82194",
-    ]
+    ],
+    backupSound: ["/sounds/ryanDunn1.mp3", "/sounds/ryanDunn2.mp3", "/sounds/ryanDunn3.mp3", "/sounds/ryanDunn4.mp3", "/sounds/ryanDunn5.mp3", "/sounds/ryanDunn6.mp3", "/sounds/ryanDunn7.mp3", "/sounds/ryanDunn8.mp3"]
   },
   "4": { 
     name: "charlieTree", 
     image: "/expanded/screen4.png",
-    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fcbrown.mp3?alt=media&token=f1922642-3943-41b8-a5b2-491fdc3a47fd"]
+    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fcbrown.mp3?alt=media&token=f1922642-3943-41b8-a5b2-491fdc3a47fd"],
+    backupSound: ["/sounds/cbrown.mp3"]
   }
 };
 
@@ -50,7 +55,8 @@ export const music = [
 		name: "Rest",
 		artist: "backtothemoney",
 		song: "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/songs%2Frest.mp3?alt=media&token=d19ab62a-27d9-4ba5-b4d3-8bbf585e8f4c",
-		image: "/music/b2mtab.png",
+		backupSong: "/music/rest.mp3",
+    image: "/music/b2mtab.png",
         fullImage: "/music/b2mProfile.png",
 	},
 	{
@@ -58,7 +64,8 @@ export const music = [
 		name: "Main Theme",
 		artist: "Will Alone",
 		song: "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/songs%2Fmain-theme.mp3?alt=media&token=84658e63-62f3-4bc6-a34e-fd227dd530ad",
-		image: "/music/bywilltab.png",
+		backupSong: "/music/main-theme.mp3",
+    image: "/music/bywilltab.png",
         fullImage: "/music/bywillaloneProfile.png",
 	},
 	{
@@ -66,7 +73,8 @@ export const music = [
 		name: "Like a Motion Picture",
 		artist: "jgack",
 		song: "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/songs%2Flike-a-motion-picture.mp3?alt=media&token=0d4211aa-13a4-4390-bbc4-59ff712aed5c",
-		image: "/music/jgacktab.png",
+		backupSong: "/music/like-a-motion-picture.mp3",
+    image: "/music/jgacktab.png",
         fullImage: "/music/JgackPorfile.png",
 	},
 ];

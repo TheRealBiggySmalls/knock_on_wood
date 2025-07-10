@@ -1,8 +1,7 @@
-  .starry-background {
+.starry-background {
     background-image: url('https://media.tenor.com/TZaIBNauQfAAAAAM/stars-galaxy.gif'); 
     background-size: cover;
     background-position: center;
-    width: 800px; 
     height: 100vh;
     margin: 0 auto; 
     display: flex;

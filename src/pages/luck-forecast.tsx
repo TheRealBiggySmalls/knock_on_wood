@@ -112,7 +112,7 @@ const LuckForecast = () => {
               animation: 'clover-float 1.4s cubic-bezier(.4,1.6,.6,1) forwards'
             }}
           >
-            <img src="/random/floatClover.png" className="inline-block w-14 h-14 ml-2" />
+            <img src="/random/floatClover.png" className="inline-block w-14 h-14 ml-2" alt="Floating clover" loading="lazy" draggable={false} />
           </span>
         ))}
       </div>
@@ -130,7 +130,7 @@ const LuckForecast = () => {
           disabled={addingLuck}
           style={{ pointerEvents: addingLuck ? 'none' : 'auto' }}
         >
-          <img src="/buttons/clovernew2.png" className="inline-block w-24 h-24 ml-2" />
+          <img src="/buttons/clovernew2.png" className="inline-block w-24 h-24 ml-2" alt="Add luck clover" loading="lazy" draggable={false} />
         </button>
         <div className="mt-2 text-base text-gray-200 font-medium text-center w-full">
           Luck forecast is: <span

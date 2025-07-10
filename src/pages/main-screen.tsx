@@ -7,14 +7,13 @@ import { mainScreenButtons, entryPageItems, expandedWoods } from "@/constants/as
 {/*NOTE: expanded wood is rendered here locally instead of routed as a new page for better performance of mounting/unmounting video/image components */}
 const MainScreen = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { hasSeenEntry, setHasSeenEntry } = useOmniContext();
+  const { hasSeenEntry, setHasSeenEntry, isOnline } = useOmniContext();
   const [fadeOut, setFadeOut] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [profileName, setProfileName] = useState("");
   const [profileCity, setProfileCity] = useState("");
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [expandedWoodId, setExpandedWoodId] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageCache, setImageCache] = useState<{[key: string]: boolean}>({});
 
@@ -74,16 +73,20 @@ const MainScreen = () => {
   // expanded wood modal logic
   const expandedWoodItem = useMemo(() => expandedWoodId ? expandedWoods[expandedWoodId as keyof typeof expandedWoods] : null, [expandedWoodId]);
 
+  // Allow sound spamming and keep visual feedback
+  const [isPlaying, setIsPlaying] = useState(false);
   const playWoodSound = useCallback(() => {
-    if (!expandedWoodItem || isPlaying) return;
+    if (!expandedWoodItem) return;
     setIsPlaying(true);
-    const soundToPlay = expandedWoodItem.sound.length === 1
-      ? expandedWoodItem.sound[0]
-      : expandedWoodItem.sound[Math.floor(Math.random() * expandedWoodItem.sound.length)];
+    const useRemote = isOnline;
+    const soundArr = useRemote ? expandedWoodItem.sound : expandedWoodItem.backupSound;
+    const soundToPlay = soundArr.length === 1
+      ? soundArr[0]
+      : soundArr[Math.floor(Math.random() * soundArr.length)];
     const audio = new Audio(soundToPlay);
     audio.play().catch(console.error);
-    setTimeout(() => setIsPlaying(false), 300);
-  }, [expandedWoodItem, isPlaying]);
+    setTimeout(() => setIsPlaying(false), 200); // short feedback for each click
+  }, [expandedWoodItem, isOnline]);
 
   const handleImageLoad = useCallback(() => {
     setImageLoaded(true);
@@ -105,6 +108,8 @@ const MainScreen = () => {
             src={entryPageItems[entryIndex].image}
             alt={entryPageItems[entryIndex].name}
             className="w-full h-full object-contain"
+            loading="lazy"
+            draggable={false}
           />
         </div>
       )}
@@ -136,6 +141,8 @@ const MainScreen = () => {
             src={profilePic}
             alt="Profile"
             className="w-full h-full object-cover rounded-full"
+            loading="lazy"
+            draggable={false}
           />
         ) : (
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-white">
@@ -160,6 +167,8 @@ const MainScreen = () => {
                   src={profilePic || "/placeholder.svg"}
                   alt="Profile"
                   className="w-20 h-20 object-cover border border-gray-300 rounded-none"
+                  loading="lazy"
+                  draggable={false}
                 />
                 <input
                   id="profile-pic"
@@ -192,10 +201,10 @@ const MainScreen = () => {
               {/* luck and chat navigation */}
               <div className="flex w-full gap-4 mt-4">
                 <Link to="/luck-forecast" className="flex-1 flex flex-col items-center justify-center">
-                  <img src="/buttons/clovernew2.png" alt="Luck Forecast" className="w-12 h-12" />
+                  <img src="/buttons/clovernew2.png" alt="Luck Forecast" className="w-12 h-12" loading="lazy" draggable={false} />
                 </Link>
                 <Link to="/message-thread" className="flex-1 flex flex-col items-center justify-center">
-                  <img src="/buttons/chat2.png" alt="Messages" className="w-12 h-12" />
+                  <img src="/buttons/chat2.png" alt="Messages" className="w-12 h-12" loading="lazy" draggable={false} />
                 </Link>
               </div>
               <div className="mt-4">
@@ -215,13 +224,11 @@ const MainScreen = () => {
             onClick={() => setExpandedWoodId(null)}
             aria-label="Back"
           >
-            <img src="/random/back2.png" alt="Back" className="w-40 h-25" />
+            <img src="/random/back2.png" alt="Back" className="w-40 h-25" loading="lazy" draggable={false} />
           </button>
           {/* full screen image */}
           <div
-            className={`absolute inset-0 cursor-pointer transition-transform duration-200 ${
-              isPlaying ? 'scale-95' : 'scale-100'
-            } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`absolute inset-0 cursor-pointer transition-transform duration-200 ${isPlaying ? 'scale-95' : 'scale-100'} ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onClick={playWoodSound}
           >
             <img
@@ -230,6 +237,8 @@ const MainScreen = () => {
               className="w-full h-full object-cover"
               onLoad={handleImageLoad}
               style={imageCache[expandedWoodId || ''] ? { filter: 'none' } : { filter: 'blur(2px)' }}
+              loading="lazy"
+              draggable={false}
             />
           </div>
           {/* visual feedback when playing */}
@@ -258,6 +267,7 @@ const MainScreen = () => {
                   alt={button.name}
                   className="w-full h-full object-contain rounded-lg select-none"
                   draggable={false}
+                  loading="lazy"
                 />
               </div>
             </button>

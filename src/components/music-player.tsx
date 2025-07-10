@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
 import { music } from "@/constants/assets"; 
+import { useOmniContext } from "@/context/omni-context";
 
 let globalAudio: HTMLAudioElement | null = null;
 let globalTrackIndex: number | null = null;
 let globalSetters: Array<(idx: number) => void> = [];
 
 const MusicPlayer = () => {
+	const { isOnline } = useOmniContext();
 	useEffect(() => {
 		if (!globalAudio) {
-			globalAudio = new Audio(music[globalTrackIndex || 0].song);
+			const idx = globalTrackIndex || 0;
+			const src = isOnline ? music[idx].song : music[idx].backupSong;
+			globalAudio = new Audio(src);
 			globalAudio.loop = false;
-			globalAudio.volume = 0.1;
+			globalAudio.volume = 0.05;
 			globalAudio.onended = () => {
 				const nextIndex = (globalTrackIndex! + 1) % music.length;
 				globalTrackIndex = nextIndex;
-				globalAudio!.src = music[nextIndex].song;
+				const nextSrc = isOnline ? music[nextIndex].song : music[nextIndex].backupSong;
+				globalAudio!.src = nextSrc;
 				globalAudio!.play();
 				globalSetters.forEach((fn) => fn(nextIndex));
 			};
@@ -28,7 +33,7 @@ const MusicPlayer = () => {
 				globalTrackIndex = null;
 			}
 		};
-	}, []);
+	}, [isOnline]);
 
 	return null;
 };
@@ -50,6 +55,8 @@ const MusicPlayerUI = () => {
 				alt={music[currentTrackIndex].name}
 				className="h-32 md:h-48 w-auto object-contain pointer-events-auto"
 				style={{ maxWidth: '90vw' }}
+				loading="lazy"
+				draggable={false}
 			/>
 		</div>
 	);
@@ -70,8 +77,11 @@ const MusicProfileUI = () => {
 		<div className="z-50 flex items-center justify-center pointer-events-none" style={{ background: "none" }}>
 			<img
 				src={music[currentTrackIndex].fullImage}
+				alt={music[currentTrackIndex].name}
 				className="h-32 md:h-48 w-auto object-contain pointer-events-auto"
 				style={{ maxWidth: '90vw' }}
+				loading="lazy"
+				draggable={false}
 			/>
 		</div>
 	);
