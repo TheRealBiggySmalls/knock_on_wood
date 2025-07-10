@@ -97,6 +97,7 @@ const MainScreen = () => {
           className={`absolute inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-300 ease-linear ${
             fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
+          style={fadeOut ? { pointerEvents: 'none' } : { pointerEvents: 'auto' }}
           onClick={handleEntryClick}
           onTransitionEnd={handleTransitionEnd}
         >
@@ -126,7 +127,8 @@ const MainScreen = () => {
 
       {/* user icon */}
       <button
-        className="fixed top-4 right-4 z-30 flex items-center justify-center w-10 h-10 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 rounded-full shadow-lg backdrop-blur-sm overflow-hidden"
+        className="fixed top-8 right-6 z-30 flex items-center justify-center w-14 h-14 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 rounded-full shadow-lg backdrop-blur-sm overflow-hidden"
+        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
         onClick={() => setShowProfileModal(true)}
       >
         {profilePic ? (
@@ -136,7 +138,7 @@ const MainScreen = () => {
             className="w-full h-full object-cover rounded-full"
           />
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10 text-white">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 1115 0v.75a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.75z" />
           </svg>
         )}
