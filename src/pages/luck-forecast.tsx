@@ -96,7 +96,7 @@ const LuckForecast = () => {
   }
 
   return (
-    <div className="starry-background flex flex-col items-center justify-center min-h-screen bg-[#e6e6e6] relative">
+    <div className="starry-background flex flex-col items-center justify-center min-h-screen w-full bg-[#e6e6e6] relative overflow-x-hidden">
       {/* emoji animations */}
       <div style={{ pointerEvents: 'none', position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 50 }}>
         {clovers.map(({id, left}) => (
@@ -116,7 +116,7 @@ const LuckForecast = () => {
           </span>
         ))}
       </div>
-      <div className="absolute top-4 left-4 z-20">
+      <div className="absolute top-7 left-4 z-20">
         <button
           onClick={() => navigate("/")}
           className="bg-black/50 backdrop-blur-sm rounded-full p-2 text-white hover:bg-black/70 transition-colors"
@@ -124,7 +124,7 @@ const LuckForecast = () => {
           <ArrowLeft size={24} />
         </button>
       </div>
-      <div className="flex flex-col items-center justify-center w-full" style={{ minHeight: '80vh' }}>
+      <div className="flex flex-col items-center justify-center w-full max-w-[480px] mx-auto" style={{ minHeight: '80vh' }}>
         <button
           onClick={handleAddLuck}
           disabled={addingLuck}
@@ -132,7 +132,7 @@ const LuckForecast = () => {
         >
           <img src="/buttons/clovernew2.png" className="inline-block w-24 h-24 ml-2" />
         </button>
-        <div className="mt-2 text-base text-gray-200 font-medium text-center">
+        <div className="mt-2 text-base text-gray-200 font-medium text-center w-full">
           Luck forecast is: <span
             className="font-bold"
             style={forecast === "Golden Eternal Luck Radiance"
@@ -143,7 +143,7 @@ const LuckForecast = () => {
         <div className="mt-8 w-full flex justify-center">
           <LuckForecastGraph today={today} allTimeHigh={allTimeHigh} />
         </div>
-        <div className="mt-2 text-xs text-gray-400 text-center">Feeling lucky?</div>
+        <div className="mt-2 text-xs text-gray-400 text-center w-full">Feeling lucky?</div>
       </div>
       <style>{`
         @keyframes clover-float {
