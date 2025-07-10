@@ -70,15 +70,7 @@ const MessageThread = () => {
 
   return (
     <div className="starry-background flex flex-col items-center justify-center min-h-screen bg-[#e6e6e6] relative">
-      <div className="absolute top-4 left-4 z-20">
-        {/* back button
-          <button
-            className="absolute top-4 left-4 z-20 bg-transparent p-0 m-0"
-            onClick={() => setExpandedWoodId(null)}
-            aria-label="Back"
-          >
-            <img src="/random/back2.png" alt="Back" className="w-40 h-25" />
-          </button> */}
+      <div className="absolute top-7 left-4 z-20">
         <button
           onClick={() => navigate("/")}
           className="bg-black/50 backdrop-blur-sm rounded-full p-2 text-white hover:bg-black/70 transition-colors"
@@ -86,11 +78,14 @@ const MessageThread = () => {
           <ArrowLeft size={24} />
         </button>
       </div>
-      <div className="w-full max-w-md flex flex-col rounded-2xl shadow-lg border-4 border-[#bcbcbc] bg-[#f7f7f7] mt-10 mb-10 flex-1 overflow-hidden" style={{height: '70vh'}}>
-        <div className="flex items-center justify-center py-2 bg-[#d1d5db] border-b-2 border-[#bcbcbc] text-lg font-bold tracking-wide text-[#222]" style={{fontFamily: 'Verdana, Geneva, Tahoma, sans-serif', letterSpacing: 1}}>
+      <div className="flex flex-col rounded-2xl shadow-lg border-4 border-[#bcbcbc] bg-[#f7f7f7] flex-1 overflow-hidden items-center justify-center"
+        style={{ width: '80vw', maxWidth: 480, height: '80vh', maxHeight: 700, minHeight: 400, margin: 'auto' }}>
+        <div className="flex items-center justify-center py-2 bg-[#d1d5db] border-b-2 border-[#bcbcbc] text-lg font-bold tracking-wide text-[#222] w-full"
+          style={{fontFamily: 'Verdana, Geneva, Tahoma, sans-serif', letterSpacing: 1}}>
           <span>💬 Feeling Lucky?</span>
         </div>
-        <div ref={threadRef} className="flex-1 overflow-y-auto px-4 py-2 space-y-2 bg-[#f7f7f7]" style={{fontFamily: 'Verdana, Geneva, Tahoma, sans-serif'}}>
+        <div ref={threadRef} className="flex-1 overflow-y-auto px-4 py-2 space-y-2 bg-[#f7f7f7] w-full"
+          style={{fontFamily: 'Verdana, Geneva, Tahoma, sans-serif'}}>
           {loading ? (
             <div className="text-center text-gray-400 mt-8">Loading...</div>
           ) : messages.length === 0 ? (
@@ -118,7 +113,7 @@ const MessageThread = () => {
           )}
         </div>
         {/* input area */}
-        <div className="flex flex-col gap-2 p-3 bg-[#e6e6e6] border-t-2 border-[#bcbcbc]">
+        <div className="flex flex-col gap-2 p-3 bg-[#e6e6e6] border-t-2 border-[#bcbcbc] w-full">
           <div className="flex gap-2">
             <button
               className="flex-1 bg-[#fff3e0] border border-[#ffcc80] rounded-lg px-2 py-1 text-xs text-[#b26a00] font-semibold shadow-sm disabled:opacity-50"

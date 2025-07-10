@@ -127,7 +127,7 @@ const MainScreen = () => {
 
       {/* user icon */}
       <button
-        className="fixed top-8 right-6 z-30 flex items-center justify-center w-14 h-14 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 rounded-full shadow-lg backdrop-blur-sm overflow-hidden"
+        className="fixed top-10 right-5 z-30 flex items-center justify-center w-12 h-12 bg-white/20 hover:bg-white/40 transition-colors border border-white/40 rounded-full shadow-lg backdrop-blur-sm overflow-hidden"
         style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
         onClick={() => setShowProfileModal(true)}
       >

@@ -124,25 +124,27 @@ const LuckForecast = () => {
           <ArrowLeft size={24} />
         </button>
       </div>
-      <button
-        onClick={handleAddLuck}
-        disabled={addingLuck}
-        style={{ pointerEvents: addingLuck ? 'none' : 'auto' }}
-      >
-        <img src="/buttons/clovernew2.png" className="inline-block w-24 h-24 ml-2" />
-      </button>
-      <div className="mt-2 text-base text-gray-200 font-medium">
-        Luck forecast is: <span
-          className="font-bold"
-          style={forecast === "Golden Eternal Luck Radiance"
-            ? { background: forecastColor, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }
-            : { color: forecastColor }}
-        >{forecast != "..." ? forecast : "Low"}</span> ({luckCount !== null ? luckCount : 0})
+      <div className="flex flex-col items-center justify-center w-full" style={{ minHeight: '80vh' }}>
+        <button
+          onClick={handleAddLuck}
+          disabled={addingLuck}
+          style={{ pointerEvents: addingLuck ? 'none' : 'auto' }}
+        >
+          <img src="/buttons/clovernew2.png" className="inline-block w-24 h-24 ml-2" />
+        </button>
+        <div className="mt-2 text-base text-gray-200 font-medium text-center">
+          Luck forecast is: <span
+            className="font-bold"
+            style={forecast === "Golden Eternal Luck Radiance"
+              ? { background: forecastColor, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }
+              : { color: forecastColor }}
+          >{forecast != "..." ? forecast : "Low"}</span> ({luckCount !== null ? luckCount : 0})
+        </div>
+        <div className="mt-8 w-full flex justify-center">
+          <LuckForecastGraph today={today} allTimeHigh={allTimeHigh} />
+        </div>
+        <div className="mt-2 text-xs text-gray-400 text-center">Feeling lucky?</div>
       </div>
-      <div className="mt-8 w-full flex justify-center">
-        <LuckForecastGraph today={today} allTimeHigh={allTimeHigh} />
-      </div>
-      <div className="mt-2 text-xs text-gray-400 text-center">Feeling lucky?</div>
       <style>{`
         @keyframes clover-float {
           0% {
