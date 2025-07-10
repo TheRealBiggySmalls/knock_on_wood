@@ -116,7 +116,7 @@ const LuckForecast = () => {
           </span>
         ))}
       </div>
-      <div className="absolute top-7 left-4 z-20">
+      <div className="absolute top-10 left-4 z-20">
         <button
           onClick={() => navigate("/")}
           className="bg-black/50 backdrop-blur-sm rounded-full p-2 text-white hover:bg-black/70 transition-colors"

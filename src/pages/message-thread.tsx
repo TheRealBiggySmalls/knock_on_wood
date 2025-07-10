@@ -70,7 +70,7 @@ const MessageThread = () => {
 
   return (
     <div className="starry-background flex flex-col items-center justify-center min-h-screen w-full bg-[#e6e6e6] relative overflow-x-hidden">
-      <div className="absolute top-7 left-4 z-20">
+      <div className="absolute top-10 left-4 z-20">
         <button
           onClick={() => navigate("/")}
           className="bg-black/50 backdrop-blur-sm rounded-full p-2 text-white hover:bg-black/70 transition-colors"
@@ -78,7 +78,7 @@ const MessageThread = () => {
           <ArrowLeft size={24} />
         </button>
       </div>
-      <div className="flex flex-col rounded-2xl shadow-lg border-4 border-[#bcbcbc] bg-[#f7f7f7] flex-1 overflow-hidden items-center justify-center mx-auto w-full max-w-[480px] h-[80vh] max-h-[700px] min-h-[400px]">
+      <div className="flex flex-col rounded-2xl shadow-lg border-4 border-[#bcbcbc] bg-[#f7f7f7] flex-1 overflow-hidden items-center justify-center mx-auto w-[80vh] max-w-[480px] h-[75vh] max-h-[700px] min-h-[400px]">
         <div className="flex items-center justify-center py-2 bg-[#d1d5db] border-b-2 border-[#bcbcbc] text-lg font-bold tracking-wide text-[#222] w-full"
           style={{fontFamily: 'Verdana, Geneva, Tahoma, sans-serif', letterSpacing: 1}}>
           <span>💬 Feeling Lucky?</span>
