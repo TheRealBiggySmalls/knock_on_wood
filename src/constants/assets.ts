@@ -3,12 +3,12 @@ export const expandedWoods = {
   "1": { 
     name: "ogWood", 
     image: "/expanded/screen1.png",
-    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2FWood_dig1.ogg?alt=media&token=2d941639-8b46-4c09-a326-50c030440465"]
+    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fogwood.mp3?alt=media&token=46626b72-ed86-4960-9091-cc2493bf2d1e"]
   },
   "2": { 
     name: "frodoDoor", 
     image: "/expanded/screen2.png",
-    sound: ["/sounds/wood-tap-1.wav"]
+    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Faltwood.mp3?alt=media&token=023d90cc-3a74-4ba1-8f2a-8c4667c7d55f"]
   },
   "3": { 
     name: "ryanDunn", 
@@ -27,7 +27,7 @@ export const expandedWoods = {
   "4": { 
     name: "charlieTree", 
     image: "/expanded/screen4.png",
-    sound: ["/sounds/wood-tap-1.wav"]
+    sound: ["https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fcbrown.mp3?alt=media&token=f1922642-3943-41b8-a5b2-491fdc3a47fd"]
   }
 };
 

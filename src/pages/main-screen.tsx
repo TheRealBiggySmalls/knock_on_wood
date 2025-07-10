@@ -213,7 +213,7 @@ const MainScreen = () => {
             onClick={() => setExpandedWoodId(null)}
             aria-label="Back"
           >
-            <img src="/random/back-button-icon-11.png" alt="Back" className="w-20 h-20" />
+            <img src="/random/back2.png" alt="Back" className="w-40 h-25" />
           </button>
           {/* full screen image */}
           <div

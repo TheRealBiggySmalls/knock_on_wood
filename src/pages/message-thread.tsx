@@ -71,6 +71,14 @@ const MessageThread = () => {
   return (
     <div className="starry-background flex flex-col items-center justify-center min-h-screen bg-[#e6e6e6] relative">
       <div className="absolute top-4 left-4 z-20">
+        {/* back button
+          <button
+            className="absolute top-4 left-4 z-20 bg-transparent p-0 m-0"
+            onClick={() => setExpandedWoodId(null)}
+            aria-label="Back"
+          >
+            <img src="/random/back2.png" alt="Back" className="w-40 h-25" />
+          </button> */}
         <button
           onClick={() => navigate("/")}
           className="bg-black/50 backdrop-blur-sm rounded-full p-2 text-white hover:bg-black/70 transition-colors"
