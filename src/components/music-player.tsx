@@ -14,7 +14,7 @@ const MusicPlayer = () => {
 			const src = isOnline ? music[idx].song : music[idx].backupSong;
 			globalAudio = new Audio(src);
 			globalAudio.loop = false;
-			globalAudio.volume = 0.05;
+			globalAudio.volume = 0.1;
 			globalAudio.onended = () => {
 				const nextIndex = (globalTrackIndex! + 1) % music.length;
 				globalTrackIndex = nextIndex;

@@ -73,20 +73,61 @@ const MainScreen = () => {
   // expanded wood modal logic
   const expandedWoodItem = useMemo(() => expandedWoodId ? expandedWoods[expandedWoodId as keyof typeof expandedWoods] : null, [expandedWoodId]);
 
-  // Allow sound spamming and keep visual feedback
+  // Allow sound spamming and keep visual feedback with low latency
   const [isPlaying, setIsPlaying] = useState(false);
+  // Audio pool for each sound, keyed by wood id and online/offline state
+  const audioPools = useRef<{ [key: string]: HTMLAudioElement[] }>({});
+  const POOL_SIZE = 6;
+
+  // Helper to get pool key per wood and online state
+  const getPoolKey = (woodId: string | null, online: boolean) => {
+    return woodId ? `${woodId}_${online ? 'online' : 'offline'}` : '';
+  };
+
+  // Preload audio pool for all sounds on mount or when expandedWoodId or isOnline changes
+  useEffect(() => {
+    if (!expandedWoodId || !expandedWoodItem) return;
+    const useRemote = isOnline;
+    const soundArr = useRemote ? expandedWoodItem.sound : expandedWoodItem.backupSound;
+    const poolKey = getPoolKey(expandedWoodId, useRemote);
+    // Clear out any previous pool for this wood
+    audioPools.current[poolKey] = [];
+    for (let i = 0; i < POOL_SIZE; i++) {
+      // For every pool slot, create a new Audio for a random sound (even if only one sound)
+      const src = soundArr[Math.floor(Math.random() * soundArr.length)];
+      const audio = new Audio(src);
+      audio.preload = 'auto';
+      audioPools.current[poolKey].push(audio);
+    }
+    // Optionally, clean up pools for other woods to save memory
+    Object.keys(audioPools.current).forEach(key => {
+      if (key !== poolKey) delete audioPools.current[key];
+    });
+  }, [expandedWoodId, expandedWoodItem, isOnline]);
+
   const playWoodSound = useCallback(() => {
-    if (!expandedWoodItem) return;
+    if (!expandedWoodId || !expandedWoodItem) return;
     setIsPlaying(true);
     const useRemote = isOnline;
     const soundArr = useRemote ? expandedWoodItem.sound : expandedWoodItem.backupSound;
-    const soundToPlay = soundArr.length === 1
-      ? soundArr[0]
-      : soundArr[Math.floor(Math.random() * soundArr.length)];
-    const audio = new Audio(soundToPlay);
+    const poolKey = getPoolKey(expandedWoodId, useRemote);
+    const pool = audioPools.current[poolKey] || [];
+    // Always pick a random sound for each click
+    const src = soundArr[Math.floor(Math.random() * soundArr.length)];
+    // Find a free audio object in the pool (paused or ended)
+    let audio = pool.find(a => (a.paused || a.ended));
+    if (!audio) {
+      // If all are busy, reuse a random one
+      audio = pool[Math.floor(Math.random() * pool.length)] || new Audio(src);
+    }
+    // Always set src to the chosen sound (even for single-sound woods)
+    if (audio.src !== src && !audio.src.endsWith(src)) {
+      audio.src = src;
+    }
+    audio.currentTime = 0;
     audio.play().catch(console.error);
     setTimeout(() => setIsPlaying(false), 200); // short feedback for each click
-  }, [expandedWoodItem, isOnline]);
+  }, [expandedWoodId, expandedWoodItem, isOnline]);
 
   const handleImageLoad = useCallback(() => {
     setImageLoaded(true);

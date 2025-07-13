@@ -143,7 +143,7 @@ const LuckForecast = () => {
         <div className="mt-8 w-full flex justify-center">
           <LuckForecastGraph today={today} allTimeHigh={allTimeHigh} />
         </div>
-        <div className="mt-2 text-xs text-gray-400 text-center w-full">Feeling lucky?</div>
+        <div className="mt-2 text-xs text-gray-400 text-center w-full">We're all in this together c:</div>
       </div>
       <style>{`
         @keyframes clover-float {
