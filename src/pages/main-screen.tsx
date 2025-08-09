@@ -70,50 +70,92 @@ const MainScreen = () => {
       };
     });
 
-    // Preload audio pools: one audio per sound variant, per wood, per online/offline
-    const allPools: { [key: string]: HTMLAudioElement[] } = {};
-    Object.entries(expandedWoods).forEach(([id, item]) => {
-      [true, false].forEach(isOnline => {
-        const soundArr = isOnline ? item.sound : item.backupSound;
-        const poolKey = getPoolKey(id, isOnline);
-        allPools[poolKey] = soundArr.map(src => {
-          const audio = new Audio(src);
-          audio.preload = 'auto';
-          audio.load();
-          return audio;
-        });
-      });
-    });
-    audioPools.current = allPools;
+  // Removed audio pool logic; all sounds are preloaded using Web Audio API
   }, []);
 
   // expanded wood modal logic
   const expandedWoodItem = useMemo(() => expandedWoodId ? expandedWoods[expandedWoodId as keyof typeof expandedWoods] : null, [expandedWoodId]);
 
-  // Allow sound spamming and keep visual feedback with low latency
+  // Web Audio API implementation for instant, spammable, overlapping sound playback
   const [isPlaying, setIsPlaying] = useState(false);
-  // Audio pool for each sound, keyed by wood id and online/offline state
-  const audioPools = useRef<{ [key: string]: HTMLAudioElement[] }>({});
-  const POOL_SIZE = 6;
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioBuffersRef = useRef<{ [key: string]: AudioBuffer[] }>({});
 
   // Helper to get pool key per wood and online state
   const getPoolKey = (woodId: string | null, online: boolean) => {
     return woodId ? `${woodId}_${online ? 'online' : 'offline'}` : '';
   };
 
-  // Remove per-wood pool logic; all pools are preloaded on mount
+  // Preload all sounds into AudioBuffers at app start
+  useEffect(() => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    const ctx = audioContextRef.current;
+    const buffers: { [key: string]: AudioBuffer[] } = {};
+    const loadPromises: Promise<void>[] = [];
+    Object.entries(expandedWoods).forEach(([id, item]) => {
+      [true, false].forEach(isOnline => {
+        // Use remote sound if not localhost, else use backupSound
+        const isLocal = window.location.hostname === 'localhost';
+        const soundArr = isLocal ? item.backupSound : item.sound;
+        const poolKey = getPoolKey(id, isOnline);
+        buffers[poolKey] = [];
+        soundArr.forEach((src, idx) => {
+          const p = fetch(src)
+            .then(res => {
+              if (!res.ok) throw new Error('Network error');
+              return res.arrayBuffer();
+            })
+            .then(arrayBuffer => ctx.decodeAudioData(arrayBuffer))
+            .then(audioBuffer => {
+              buffers[poolKey][idx] = audioBuffer;
+            })
+            .catch(() => {
+              // Fallback to backupSound if remote fetch fails
+              if (!isLocal && item.backupSound && item.backupSound[idx]) {
+                return fetch(item.backupSound[idx])
+                  .then(res => {
+                    if (!res.ok) throw new Error('Network error');
+                    return res.arrayBuffer();
+                  })
+                  .then(arrayBuffer => ctx.decodeAudioData(arrayBuffer))
+                  .then(audioBuffer => {
+                    buffers[poolKey][idx] = audioBuffer;
+                  })
+                  .catch(() => {
+                    // Ignore failed loads
+                  });
+              }
+            });
+          loadPromises.push(p);
+        });
+      });
+    });
+    Promise.all(loadPromises).then(() => {
+      audioBuffersRef.current = buffers;
+    });
+  }, []);
 
+  // Play sound using AudioBufferSourceNode for instant, overlapping playback
   const playWoodSound = useCallback(() => {
     if (!expandedWoodId || !expandedWoodItem) return;
     setIsPlaying(true);
     const useRemote = isOnline;
     const poolKey = getPoolKey(expandedWoodId, useRemote);
-    const pool = audioPools.current[poolKey] || [];
-    if (pool.length === 0) return;
-    // Pick a random preloaded audio element and clone it for spamming
-    const audio = pool[Math.floor(Math.random() * pool.length)].cloneNode() as HTMLAudioElement;
-    audio.currentTime = 0;
-    audio.play().catch(console.error);
+    const buffers = audioBuffersRef.current[poolKey] || [];
+    const ctx = audioContextRef.current;
+    if (buffers.length === 0 || !ctx) return;
+    // Resume context if suspended (required for user gesture)
+    if (ctx.state === "suspended") {
+      ctx.resume();
+    }
+    // Pick a random buffer for each click
+    const buffer = buffers[Math.floor(Math.random() * buffers.length)];
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start(0);
     setTimeout(() => setIsPlaying(false), 200);
   }, [expandedWoodId, expandedWoodItem, isOnline]);
 
