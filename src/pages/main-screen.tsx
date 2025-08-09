@@ -57,8 +57,9 @@ const MainScreen = () => {
 
   const [entryIndex] = useState(() => Math.floor(Math.random() * entryPageItems.length));
 
-  // preload and cache expanded wood images on mount
+  // preload and cache expanded wood images and audio pools for all woods on mount
   useEffect(() => {
+    // Preload images
     const cache: {[key: string]: boolean} = {};
     Object.entries(expandedWoods).forEach(([id, item]) => {
       const img = new window.Image();
@@ -68,6 +69,22 @@ const MainScreen = () => {
         setImageCache(prev => ({ ...prev, [id]: true }));
       };
     });
+
+    // Preload audio pools: one audio per sound variant, per wood, per online/offline
+    const allPools: { [key: string]: HTMLAudioElement[] } = {};
+    Object.entries(expandedWoods).forEach(([id, item]) => {
+      [true, false].forEach(isOnline => {
+        const soundArr = isOnline ? item.sound : item.backupSound;
+        const poolKey = getPoolKey(id, isOnline);
+        allPools[poolKey] = soundArr.map(src => {
+          const audio = new Audio(src);
+          audio.preload = 'auto';
+          audio.load();
+          return audio;
+        });
+      });
+    });
+    audioPools.current = allPools;
   }, []);
 
   // expanded wood modal logic
@@ -84,49 +101,20 @@ const MainScreen = () => {
     return woodId ? `${woodId}_${online ? 'online' : 'offline'}` : '';
   };
 
-  // Preload audio pool for all sounds on mount or when expandedWoodId or isOnline changes
-  useEffect(() => {
-    if (!expandedWoodId || !expandedWoodItem) return;
-    const useRemote = isOnline;
-    const soundArr = useRemote ? expandedWoodItem.sound : expandedWoodItem.backupSound;
-    const poolKey = getPoolKey(expandedWoodId, useRemote);
-    // Clear out any previous pool for this wood
-    audioPools.current[poolKey] = [];
-    for (let i = 0; i < POOL_SIZE; i++) {
-      // For every pool slot, create a new Audio for a random sound (even if only one sound)
-      const src = soundArr[Math.floor(Math.random() * soundArr.length)];
-      const audio = new Audio(src);
-      audio.preload = 'auto';
-      audioPools.current[poolKey].push(audio);
-    }
-    // Optionally, clean up pools for other woods to save memory
-    Object.keys(audioPools.current).forEach(key => {
-      if (key !== poolKey) delete audioPools.current[key];
-    });
-  }, [expandedWoodId, expandedWoodItem, isOnline]);
+  // Remove per-wood pool logic; all pools are preloaded on mount
 
   const playWoodSound = useCallback(() => {
     if (!expandedWoodId || !expandedWoodItem) return;
     setIsPlaying(true);
     const useRemote = isOnline;
-    const soundArr = useRemote ? expandedWoodItem.sound : expandedWoodItem.backupSound;
     const poolKey = getPoolKey(expandedWoodId, useRemote);
     const pool = audioPools.current[poolKey] || [];
-    // Always pick a random sound for each click
-    const src = soundArr[Math.floor(Math.random() * soundArr.length)];
-    // Find a free audio object in the pool (paused or ended)
-    let audio = pool.find(a => (a.paused || a.ended));
-    if (!audio) {
-      // If all are busy, reuse a random one
-      audio = pool[Math.floor(Math.random() * pool.length)] || new Audio(src);
-    }
-    // Always set src to the chosen sound (even for single-sound woods)
-    if (audio.src !== src && !audio.src.endsWith(src)) {
-      audio.src = src;
-    }
+    if (pool.length === 0) return;
+    // Pick a random preloaded audio element and clone it for spamming
+    const audio = pool[Math.floor(Math.random() * pool.length)].cloneNode() as HTMLAudioElement;
     audio.currentTime = 0;
     audio.play().catch(console.error);
-    setTimeout(() => setIsPlaying(false), 200); // short feedback for each click
+    setTimeout(() => setIsPlaying(false), 200);
   }, [expandedWoodId, expandedWoodItem, isOnline]);
 
   const handleImageLoad = useCallback(() => {
@@ -267,9 +255,9 @@ const MainScreen = () => {
           >
             <img src="/random/back2.png" alt="Back" className="w-40 h-25" loading="lazy" draggable={false} />
           </button>
-          {/* full screen image */}
+          {/* full screen image - removed click scale animation */}
           <div
-            className={`absolute inset-0 cursor-pointer transition-transform duration-200 ${isPlaying ? 'scale-95' : 'scale-100'} ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`absolute inset-0 cursor-pointer ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onClick={playWoodSound}
           >
             <img
