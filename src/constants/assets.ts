@@ -19,12 +19,12 @@ export const expandedWoods = {
     sound: [
         "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc1.mp3?alt=media&token=8c26db71-a247-4aff-9c0d-8e013f2c0ced",
         "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc2.mp3?alt=media&token=a4ba9a15-fe35-4344-82ad-95c79fb88bda",
-        "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc3.mp3?alt=media&token=08525e67-6397-43d4-a32e-e790c16da452",
-        "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc4.mp3?alt=media&token=82a10580-e4d5-4205-8f98-649206fbdd07",
-        "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc5.mp3?alt=media&token=007ec791-59bc-45d0-be55-dda497d9dcc6",
-        "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc6.mp3?alt=media&token=75e1b4bd-15d9-42bb-b07c-6e9d83e196e7",
-        "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc7.mp3?alt=media&token=77200a7b-ebfb-42ce-ac6e-eb722030c16b",
-        "https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc8.mp3?alt=media&token=6b3474d2-a155-4d79-82a1-c66f85d3f4c7"
+        //"https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc3.mp3?alt=media&token=08525e67-6397-43d4-a32e-e790c16da452",
+        //"https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc4.mp3?alt=media&token=82a10580-e4d5-4205-8f98-649206fbdd07",
+        //"https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc5.mp3?alt=media&token=007ec791-59bc-45d0-be55-dda497d9dcc6",
+        //"https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc6.mp3?alt=media&token=75e1b4bd-15d9-42bb-b07c-6e9d83e196e7",
+        //"https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc7.mp3?alt=media&token=77200a7b-ebfb-42ce-ac6e-eb722030c16b",
+        //"https://firebasestorage.googleapis.com/v0/b/knock-on-wood-69261.firebasestorage.app/o/sounds%2Fnpc8.mp3?alt=media&token=6b3474d2-a155-4d79-82a1-c66f85d3f4c7"
     ],
     backupSound: ["/sounds/npc1.mp3", "/sounds/npc2.mp3", "/sounds/npc3.mp3", "/sounds/npc4.mp3", "/sounds/npc5.mp3", "/sounds/npc6.mp3", "/sounds/npc7.mp3", "/sounds/npc8.mp3"]
   },

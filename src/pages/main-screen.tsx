@@ -57,8 +57,9 @@ const MainScreen = () => {
 
   const [entryIndex] = useState(() => Math.floor(Math.random() * entryPageItems.length));
 
-  // preload and cache expanded wood images on mount
+  // preload and cache expanded wood images and audio pools for all woods on mount
   useEffect(() => {
+    // Preload images
     const cache: {[key: string]: boolean} = {};
     Object.entries(expandedWoods).forEach(([id, item]) => {
       const img = new window.Image();
@@ -68,65 +69,94 @@ const MainScreen = () => {
         setImageCache(prev => ({ ...prev, [id]: true }));
       };
     });
+
+  // Removed audio pool logic; all sounds are preloaded using Web Audio API
   }, []);
 
   // expanded wood modal logic
   const expandedWoodItem = useMemo(() => expandedWoodId ? expandedWoods[expandedWoodId as keyof typeof expandedWoods] : null, [expandedWoodId]);
 
-  // Allow sound spamming and keep visual feedback with low latency
+  // Web Audio API implementation for instant, spammable, overlapping sound playback
   const [isPlaying, setIsPlaying] = useState(false);
-  // Audio pool for each sound, keyed by wood id and online/offline state
-  const audioPools = useRef<{ [key: string]: HTMLAudioElement[] }>({});
-  const POOL_SIZE = 6;
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioBuffersRef = useRef<{ [key: string]: AudioBuffer[] }>({});
 
   // Helper to get pool key per wood and online state
   const getPoolKey = (woodId: string | null, online: boolean) => {
     return woodId ? `${woodId}_${online ? 'online' : 'offline'}` : '';
   };
 
-  // Preload audio pool for all sounds on mount or when expandedWoodId or isOnline changes
+  // Preload all sounds into AudioBuffers at app start
   useEffect(() => {
-    if (!expandedWoodId || !expandedWoodItem) return;
-    const useRemote = isOnline;
-    const soundArr = useRemote ? expandedWoodItem.sound : expandedWoodItem.backupSound;
-    const poolKey = getPoolKey(expandedWoodId, useRemote);
-    // Clear out any previous pool for this wood
-    audioPools.current[poolKey] = [];
-    for (let i = 0; i < POOL_SIZE; i++) {
-      // For every pool slot, create a new Audio for a random sound (even if only one sound)
-      const src = soundArr[Math.floor(Math.random() * soundArr.length)];
-      const audio = new Audio(src);
-      audio.preload = 'auto';
-      audioPools.current[poolKey].push(audio);
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
-    // Optionally, clean up pools for other woods to save memory
-    Object.keys(audioPools.current).forEach(key => {
-      if (key !== poolKey) delete audioPools.current[key];
+    const ctx = audioContextRef.current;
+    const buffers: { [key: string]: AudioBuffer[] } = {};
+    const loadPromises: Promise<void>[] = [];
+    Object.entries(expandedWoods).forEach(([id, item]) => {
+      [true, false].forEach(isOnline => {
+        // Use remote sound if not localhost, else use backupSound
+        const isLocal = window.location.hostname === 'localhost';
+        const soundArr = isLocal ? item.backupSound : item.sound;
+        const poolKey = getPoolKey(id, isOnline);
+        buffers[poolKey] = [];
+        soundArr.forEach((src, idx) => {
+          const p = fetch(src)
+            .then(res => {
+              if (!res.ok) throw new Error('Network error');
+              return res.arrayBuffer();
+            })
+            .then(arrayBuffer => ctx.decodeAudioData(arrayBuffer))
+            .then(audioBuffer => {
+              buffers[poolKey][idx] = audioBuffer;
+            })
+            .catch(() => {
+              // Fallback to backupSound if remote fetch fails
+              if (!isLocal && item.backupSound && item.backupSound[idx]) {
+                return fetch(item.backupSound[idx])
+                  .then(res => {
+                    if (!res.ok) throw new Error('Network error');
+                    return res.arrayBuffer();
+                  })
+                  .then(arrayBuffer => ctx.decodeAudioData(arrayBuffer))
+                  .then(audioBuffer => {
+                    buffers[poolKey][idx] = audioBuffer;
+                  })
+                  .catch(() => {
+                    // Ignore failed loads
+                  });
+              }
+            });
+          loadPromises.push(p);
+        });
+      });
     });
-  }, [expandedWoodId, expandedWoodItem, isOnline]);
+    Promise.all(loadPromises).then(() => {
+      audioBuffersRef.current = buffers;
+    });
+  }, []);
 
+  // Play sound using AudioBufferSourceNode for instant, overlapping playback
   const playWoodSound = useCallback(() => {
     if (!expandedWoodId || !expandedWoodItem) return;
     setIsPlaying(true);
     const useRemote = isOnline;
-    const soundArr = useRemote ? expandedWoodItem.sound : expandedWoodItem.backupSound;
     const poolKey = getPoolKey(expandedWoodId, useRemote);
-    const pool = audioPools.current[poolKey] || [];
-    // Always pick a random sound for each click
-    const src = soundArr[Math.floor(Math.random() * soundArr.length)];
-    // Find a free audio object in the pool (paused or ended)
-    let audio = pool.find(a => (a.paused || a.ended));
-    if (!audio) {
-      // If all are busy, reuse a random one
-      audio = pool[Math.floor(Math.random() * pool.length)] || new Audio(src);
+    const buffers = audioBuffersRef.current[poolKey] || [];
+    const ctx = audioContextRef.current;
+    if (buffers.length === 0 || !ctx) return;
+    // Resume context if suspended (required for user gesture)
+    if (ctx.state === "suspended") {
+      ctx.resume();
     }
-    // Always set src to the chosen sound (even for single-sound woods)
-    if (audio.src !== src && !audio.src.endsWith(src)) {
-      audio.src = src;
-    }
-    audio.currentTime = 0;
-    audio.play().catch(console.error);
-    setTimeout(() => setIsPlaying(false), 200); // short feedback for each click
+    // Pick a random buffer for each click
+    const buffer = buffers[Math.floor(Math.random() * buffers.length)];
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start(0);
+    setTimeout(() => setIsPlaying(false), 200);
   }, [expandedWoodId, expandedWoodItem, isOnline]);
 
   const handleImageLoad = useCallback(() => {
@@ -267,9 +297,9 @@ const MainScreen = () => {
           >
             <img src="/random/back2.png" alt="Back" className="w-40 h-25" loading="lazy" draggable={false} />
           </button>
-          {/* full screen image */}
+          {/* full screen image - removed click scale animation */}
           <div
-            className={`absolute inset-0 cursor-pointer transition-transform duration-200 ${isPlaying ? 'scale-95' : 'scale-100'} ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`absolute inset-0 cursor-pointer ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onClick={playWoodSound}
           >
             <img
